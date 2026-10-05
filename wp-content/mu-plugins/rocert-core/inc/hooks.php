@@ -119,6 +119,10 @@ function rocert_api_send_client(array $payload): bool
 }
 
 add_action('init', static function (): void {
+    /* Not during `wp core install`: the options table does not exist yet. */
+    if (wp_installing() || !is_blog_installed()) {
+        return;
+    }
     if (!wp_next_scheduled('rocert_api_outbox_retry')) {
         wp_schedule_event(time() + HOUR_IN_SECONDS, 'hourly', 'rocert_api_outbox_retry');
     }

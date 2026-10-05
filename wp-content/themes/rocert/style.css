@@ -460,9 +460,6 @@ img { height: auto; }
 .rc-biglist li { font-family: var(--rc-head); font-weight: 800; font-size: clamp(1.375rem, 2.4vw, 1.875rem); letter-spacing: -0.03em; padding: 12px 0; border-bottom: 1px solid var(--rc-line); }
 .rc-stdarticle { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 56px; padding: 56px 0; border-top: 2px solid var(--rc-ink); }
 .rc-stdarticle > * { margin: 0 !important; }
-.rc-stdlist > .rc-stdarticle:nth-child(2) { margin-left: 120px !important; }
-.rc-stdlist > .rc-stdarticle:nth-child(3) { margin-left: 240px !important; }
-.rc-stdlist > .rc-stdarticle:nth-child(n+4) { margin-left: 0 !important; }
 .rc-stdarticle h2 { font-size: clamp(2.25rem, 4vw, 3.5rem) !important; white-space: nowrap; margin-top: 16px !important; }
 .rc-stdarticle__name { font-family: var(--rc-head); font-weight: 700; font-size: 18px; color: var(--rc-muted); margin-top: 6px !important; }
 .rc-stdarticle__body > * + * { margin-top: 20px !important; }
@@ -633,7 +630,6 @@ img { height: auto; }
 	.rc-featured__side { padding: 40px var(--rc-gutter) 0; }
 	.rc-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 	.rc-twocol, .rc-stdarticle { grid-template-columns: 1fr; }
-	.rc-stdlist > .rc-stdarticle:nth-child(n) { margin-left: 0 !important; }
 	.rc-stdarticle h2 { white-space: normal; }
 	.rc-reqs, .rc-cards3, .rc-legend { grid-template-columns: 1fr; }
 	.rc-offset { margin-left: 0 !important; }
@@ -929,11 +925,6 @@ ul.is-style-chips > li { margin: 0 !important; display: inline-flex; align-items
 .rc-featured__side { padding-left: clamp(24px, 4vw, 56px) !important; }
 
 /* #4 Standards list: every card the same width, stepped */
-.rc-stdlist { --rc-step: 120px; }
-.rc-stdlist > .rc-stdarticle { width: calc(100% - 2 * var(--rc-step)); }
-.rc-stdlist > .rc-stdarticle:nth-child(3n+1) { margin-left: 0 !important; }
-.rc-stdlist > .rc-stdarticle:nth-child(3n+2) { margin-left: var(--rc-step) !important; }
-.rc-stdlist > .rc-stdarticle:nth-child(3n) { margin-left: calc(2 * var(--rc-step)) !important; }
 .rc-stdarticle .wp-block-buttons { margin-top: 28px !important; }
 
 /* #6 Request type tiles: the hidden radio takes no room, so the label is truly centred */
@@ -952,7 +943,6 @@ ul.is-style-chips > li { margin: 0 !important; display: inline-flex; align-items
 
 @media (max-width: 860px) {
 	.rc-featured.rc-split { grid-template-columns: var(--rc-gutter) minmax(0, 1fr) var(--rc-gutter); }
-	.rc-stdlist > .rc-stdarticle { width: 100%; margin-left: 0 !important; }
 	.rc-statement-wrap { grid-template-columns: 1fr; }
 	.rc-statement-deco { display: none; }
 }

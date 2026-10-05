@@ -17,7 +17,7 @@ add_action('wp_enqueue_scripts', static function (): void {
     wp_enqueue_style('rocert-cookieconsent', $base . 'vendor/cookieconsent/cookieconsent.css', [], '3.1.0', 'print');
     wp_style_add_data('rocert-cookieconsent', 'onload', true);
     wp_enqueue_script('rocert-cookieconsent', $base . 'vendor/cookieconsent/cookieconsent.umd.js', [], '3.1.0', ['strategy' => 'defer', 'in_footer' => true]);
-    wp_enqueue_script('rocert-consent', $base . 'js/consent.js', ['rocert-cookieconsent'], ROCERT_CORE_VERSION, ['strategy' => 'defer', 'in_footer' => true]);
+    wp_enqueue_script('rocert-consent', $base . 'js/consent.js', ['rocert-cookieconsent'], ROCERT_CORE_VERSION . '.' . filemtime(ROCERT_CORE_DIR . '/assets/js/consent.js'), ['strategy' => 'defer', 'in_footer' => true]);
     wp_localize_script('rocert-consent', 'rocertConsent', [
         'lang' => rocert_lang(),
         'privacy' => rocert_lang() === 'en' ? home_url('/en/privacy-policy/') : home_url('/politica-de-confidentialitate/'),

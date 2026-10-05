@@ -36,7 +36,7 @@
 				ro: {
 					consentModal: {
 						title: 'Folosim cookie-uri',
-						description: 'Folosim cookie-uri necesare pentru funcționarea site-ului și, doar cu acordul dumneavoastră, cookie-uri de analiză (Google Analytics) pentru a înțelege cum este folosit site-ul. Puteți schimba oricând alegerea din subsolul paginii.',
+						description: 'Folosim cookie-uri necesare pentru funcționarea site-ului și, doar cu acordul dumneavoastră, cookie-uri de analiză (Google Analytics) pentru a înțelege cum este folosit site-ul. Puteți schimba oricând alegerea din pictograma din colțul din stânga jos.',
 						acceptAllBtn: 'Accept toate',
 						acceptNecessaryBtn: 'Doar necesare',
 						showPreferencesBtn: 'Setări',
@@ -58,7 +58,7 @@
 				en: {
 					consentModal: {
 						title: 'We use cookies',
-						description: 'We use cookies that are necessary for the site to work and, only with your consent, analytics cookies (Google Analytics) to understand how the site is used. You can change your choice at any time from the page footer.',
+						description: 'We use cookies that are necessary for the site to work and, only with your consent, analytics cookies (Google Analytics) to understand how the site is used. You can change your choice at any time from the icon in the bottom-left corner.',
 						acceptAllBtn: 'Accept all',
 						acceptNecessaryBtn: 'Necessary only',
 						showPreferencesBtn: 'Settings',
@@ -80,4 +80,19 @@
 			}
 		}
 	});
+
+	/* Permanent cookie-settings button, bottom left (same pattern as respirebien.ro): hidden while a consent
+	   dialog is open (CSS, via the library's html classes), opens the preferences, gets focus back on close. */
+	var pill = document.createElement('button');
+	pill.type = 'button';
+	pill.className = 'rc-cc-pill';
+	pill.setAttribute('aria-label', cfg.lang === 'en' ? 'Cookie settings' : 'Setări cookie-uri');
+	pill.title = pill.getAttribute('aria-label');
+	pill.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>';
+	var fromPill = false;
+	pill.addEventListener('click', function () { fromPill = true; CookieConsent.showPreferences(); });
+	window.addEventListener('cc:onModalHide', function () {
+		if (fromPill && !document.documentElement.classList.contains('show--preferences')) { fromPill = false; pill.focus(); }
+	});
+	document.body.appendChild(pill);
 })();

@@ -66,7 +66,7 @@
 						var icon = ok ? '<path d="M20 6 9 17l-5-5"/>' : '<path d="M18 6 6 18M6 6l12 12"/>';
 						render('<div class="rc-result' + (ok ? '' : ' rc-result--invalid') + '">' +
 							'<div class="rc-result__status"><span class="rc-result__icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + icon + '</svg></span>' +
-							'<div><p class="rc-result__label">' + esc(t(ok ? 'valid' : 'invalid')) + '</p><p class="rc-result__text">' + esc(t(ok ? 'valid_text' : 'invalid_text')) + '</p></div></div>' +
+							'<div><p class="rc-result__label">' + esc(t(ok ? 'valid' : 'invalid')) + '</p><p class="rc-result__text">' + esc(ok ? t('valid_text') : (d.reason ? t('reason_' + d.reason) : t('invalid_text'))) + '</p></div></div>' +
 							'<div class="rc-result__body"><p class="rc-result__num">' + esc(d.serial) + '</p><p class="rc-result__org">' + esc(d.organization) + '</p>' +
 							'<dl><div><dt>' + esc(t('standard_label')) + '</dt><dd>' + esc(d.standard) + '</dd></div>' +
 							(d.scope ? '<div><dt>' + esc(t('scope')) + '</dt><dd>' + esc(d.scope) + '</dd></div>' : '') + '</dl>' +

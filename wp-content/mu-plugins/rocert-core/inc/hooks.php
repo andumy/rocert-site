@@ -71,6 +71,7 @@ add_filter('rocert/certificate/lookup', static function ($result, string $serial
     }
     return [
         'valid' => (bool) $data['valid'],
+        'reason' => strtolower((string) ($data['reason'] ?? '')),
         'organization' => (string) ($data['client'] ?? ''),
         'standard' => (string) ($data['standard'] ?? ''),
         'scope' => (string) ($data['scope'] ?? ''),
@@ -151,7 +152,7 @@ if (wp_get_environment_type() !== 'production' && !ROCERT_API_URL) {
     add_filter('rocert/certificate/lookup', static function ($result, string $serial) {
         $demo = [
             '3F2A9C1E-4B7D-4E2A-9C51-7A1D2E3F4B5C' => ['valid' => true, 'organization' => 'EXEMPLU PRODUCȚIE SRL (DEMO)', 'standard' => 'SR EN ISO 9001:2015', 'scope' => 'Producția de construcții metalice și prelucrări mecanice'],
-            '8C1D4E7F-2A3B-4C5D-8E9F-0A1B2C3D4E5F' => ['valid' => false, 'organization' => 'EXEMPLU LOGISTIC SA (DEMO)', 'standard' => 'SR EN ISO 14001:2015', 'scope' => 'Transport rutier de mărfuri și depozitare'],
+            '8C1D4E7F-2A3B-4C5D-8E9F-0A1B2C3D4E5F' => ['valid' => false, 'reason' => 'expirat', 'organization' => 'EXEMPLU LOGISTIC SA (DEMO)', 'standard' => 'SR EN ISO 14001:2015', 'scope' => 'Transport rutier de mărfuri și depozitare'],
         ];
         return $result ?? ($demo[$serial] ?? false);
     }, 20, 2);

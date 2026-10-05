@@ -8,7 +8,7 @@ defined('ABSPATH') || exit;
 function rocert_enqueue_front(): void
 {
     wp_enqueue_script('rocert', ROCERT_CORE_URL . '/assets/js/rocert.js', [], ROCERT_CORE_VERSION . '.' . filemtime(ROCERT_CORE_DIR . '/assets/js/rocert.js'), ['strategy' => 'defer', 'in_footer' => true]);
-    $keys = ['valid', 'valid_text', 'invalid', 'invalid_text', 'standard_label', 'scope', 'not_found', 'not_found_text', 'unavailable', 'unavailable_text', 'too_many', 'source_note', 'searching', 'verify', 'serial', 'serial_hint', 'serial_placeholder', 'serial_invalid', 'anaf_button', 'anaf_loading', 'anaf_ok', 'anaf_fail', 'anaf_invalid'];
+    $keys = ['valid', 'valid_text', 'invalid', 'invalid_text', 'reason_expirat', 'reason_suspendat', 'reason_retras', 'standard_label', 'scope', 'not_found', 'not_found_text', 'unavailable', 'unavailable_text', 'too_many', 'source_note', 'searching', 'verify', 'serial', 'serial_hint', 'serial_placeholder', 'serial_invalid', 'anaf_button', 'anaf_loading', 'anaf_ok', 'anaf_fail', 'anaf_invalid'];
     wp_localize_script('rocert', 'rocertCfg', ['rest' => esc_url_raw(rest_url('rocert/v1/')), 'i18n' => array_combine($keys, array_map('rocert_t', $keys))]);
 }
 

@@ -52,6 +52,7 @@ function rocert_rest_verify(WP_REST_Request $request): WP_REST_Response
     return new WP_REST_Response([
         'status' => 'found',
         'valid' => (bool) ($result['valid'] ?? false),
+        'reason' => in_array($result['reason'] ?? '', ['expirat', 'suspendat', 'retras'], true) ? $result['reason'] : '',
         'serial' => $serial,
         'organization' => (string) ($result['organization'] ?? ''),
         'standard' => (string) ($result['standard'] ?? ''),

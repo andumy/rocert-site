@@ -12,7 +12,8 @@ or manually (*Run workflow*):
 2. builds `.env` from `deploy/.env.static` + the Infisical **`prod`** environment;
 3. rsyncs the repo to `/var/www/rocertsite` — never `wordpress/` (core, plugins, uploads stay on the server);
 4. runs `make start-prod` there: rebuilds the container (`docker-compose.prod.yml`, bound to `127.0.0.1:$APP_PORT`)
-   and runs `provision.sh` (idempotent; seeds content only the very first time).
+   and runs `provision.sh` (idempotent; seeds content only the very first time, then applies any pending
+   one-off content fixes from `content/migrate.php`, each exactly once per site).
 
 GitHub repository secrets: `SSH_PRIVATE_KEY`, `SSH_USER` (andumy), `REMOTE_SERVER`,
 `INFISICAL_ID`, `INFISICAL_SECRET`. Set `PROJECT_ID` in the workflow to the Infisical project id.

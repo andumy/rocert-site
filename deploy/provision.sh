@@ -86,6 +86,9 @@ if [ "$(wp option get rocert_seeded 2>/dev/null || true)" = "" ]; then
   wp eval-file "$CONTENT/seed.php"
 fi
 
+log "Content migrations"
+wp eval-file "$CONTENT/migrate.php"
+
 log "SEO: indexables + llms.txt"
 wp eval-file "$CONTENT/post-seed.php"
 

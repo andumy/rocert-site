@@ -84,6 +84,34 @@
 		if (root.dataset.autorun) { form.requestSubmit ? form.requestSubmit() : form.dispatchEvent(new Event('submit')); }
 	});
 
+	/* Mouse drag to scroll a horizontal track (touch devices already swipe natively). A drag never counts as a
+	   click on the links inside. onRelease(moved) runs when the mouse is let go. */
+	function dragScroll(track, onRelease) {
+		var dragging = false, moved = false, startX = 0, startLeft = 0;
+		track.addEventListener('pointerdown', function (e) {
+			if (e.pointerType !== 'mouse' || e.button !== 0) return;
+			dragging = true; moved = false; startX = e.clientX; startLeft = track.scrollLeft;
+		});
+		window.addEventListener('pointermove', function (e) {
+			if (!dragging) return;
+			var dx = e.clientX - startX;
+			/* Drag mode (no snapping, links inert) only once the mouse really moves, so a plain click still clicks */
+			if (!moved && Math.abs(dx) > 4) { moved = true; track.classList.add('is-dragging'); }
+			if (moved) track.scrollLeft = startLeft - dx;
+		});
+		window.addEventListener('pointerup', function () {
+			if (!dragging) return;
+			dragging = false;
+			track.classList.remove('is-dragging');
+			if (onRelease) onRelease(moved);
+		});
+		track.addEventListener('click', function (e) { if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; } }, true);
+		track.addEventListener('dragstart', function (e) { e.preventDefault(); });
+	}
+
+	/* Image strips (certification hub): drag, then let scroll-snap settle on the nearest card */
+	document.querySelectorAll('.rc-strip').forEach(function (track) { dragScroll(track); });
+
 	/* Carousels: drag to scroll, arrow buttons, optional autoplay that rewinds at the end */
 	var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 	document.querySelectorAll('[data-rc-carousel]').forEach(function (root) {
@@ -111,31 +139,13 @@
 			if (e.key === 'ArrowLeft') { e.preventDefault(); go(-1); }
 		});
 
-		/* Mouse drag (touch devices already swipe natively) */
-		var dragging = false, moved = false, startX = 0, startLeft = 0;
-		track.addEventListener('pointerdown', function (e) {
-			if (e.pointerType !== 'mouse' || e.button !== 0) return;
-			dragging = true; moved = false; startX = e.clientX; startLeft = track.scrollLeft;
-			track.classList.add('is-dragging');
-		});
-		window.addEventListener('pointermove', function (e) {
-			if (!dragging) return;
-			var dx = e.clientX - startX;
-			if (Math.abs(dx) > 4) moved = true;
-			track.scrollLeft = startLeft - dx;
-		});
-		window.addEventListener('pointerup', function () {
-			if (!dragging) return;
-			dragging = false;
-			track.classList.remove('is-dragging');
+		dragScroll(track, function (moved) {
 			if (moved) {
 				var w = step();
 				track.scrollTo({ left: Math.round(track.scrollLeft / w) * w, behavior: 'smooth' });
 			}
 			restart();
 		});
-		track.addEventListener('click', function (e) { if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; } }, true);
-		track.addEventListener('dragstart', function (e) { e.preventDefault(); });
 
 		/* Autoplay: pauses on hover, focus, drag and when off-screen */
 		var timer = null, hovering = false, visible = false;

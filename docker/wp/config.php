@@ -16,6 +16,17 @@ if (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https') {
     $_SERVER['HTTPS'] = 'on';
 }
 
+/* The shared MariaDB runs with ANSI_QUOTES, which turns "text" into a column name and breaks Yoast/Wordfence
+   queries. WordPress already strips other incompatible modes per connection; add this one (pre-initialised
+   hook, since the database connects before any plugin loads). */
+$GLOBALS['wp_filter']['incompatible_sql_modes'][10][] = [
+    'function' => static fn (array $modes): array => array_merge($modes, ['ANSI_QUOTES']),
+    'accepted_args' => 1,
+];
+
+/* Super Page Cache's disk cache (advanced-cache.php drop-in, enabled by deploy/configure.php). */
+define('WP_CACHE', WP_ENVIRONMENT_TYPE !== 'local');
+
 define('DISALLOW_FILE_EDIT', true);
 define('WP_POST_REVISIONS', 15);
 define('AUTOSAVE_INTERVAL', 120);

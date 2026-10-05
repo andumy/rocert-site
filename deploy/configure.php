@@ -69,6 +69,20 @@ if (ROCERT_TURNSTILE_SITE_KEY && ROCERT_TURNSTILE_SECRET) {
     update_option('_fluentform_turnstile_keys_status', true, false);
 }
 
+/* Super Page Cache: full pages cached on disk and served before WordPress loads (logged-in users bypass it).
+   Not locally, where pages must reflect code changes immediately. Purged on every deploy. */
+global $sw_cloudflare_pagecache;
+if (wp_get_environment_type() !== 'local' && class_exists('SPC\\Services\\Settings_Store') && $sw_cloudflare_pagecache) {
+    SPC\Services\Settings_Store::get_instance()
+        ->set(SPC\Constants::SETTING_CF_CACHE_ENABLED, 1)
+        ->set(SPC\Constants::SETTING_ENABLE_FALLBACK_CACHE, 1)
+        ->set(SPC\Constants::SETTING_FALLBACK_CACHE_CURL, 0)
+        ->save();
+    $fallback = $sw_cloudflare_pagecache->get_core_loader()->fallback_cache();
+    WP_CLI::log($fallback->fallback_cache_advanced_cache_enable() ? 'Page cache: on' : 'Page cache: advanced-cache.php could not be written');
+    $fallback->fallback_cache_purge_all();
+}
+
 /* WP core housekeeping */
 update_option('show_avatars', 0);
 update_option('default_pingback_flag', 0);

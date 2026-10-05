@@ -401,6 +401,9 @@ img { height: auto; }
 .rc-hubhero__aside { max-width: 400px; padding-bottom: 12px; }
 .rc-hubhero__aside .wp-block-buttons { margin-top: 22px !important; }
 .rc-strip { --rc-edge: max(var(--rc-gutter), calc((100vw - var(--rc-wrap)) / 2)); display: flex; gap: 20px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: var(--rc-edge); padding: 8px var(--rc-gutter) 40px var(--rc-edge); scrollbar-width: thin; }
+.rc-strip { cursor: grab; user-select: none; -webkit-user-select: none; }
+.rc-strip.is-dragging { cursor: grabbing; scroll-snap-type: none; }
+.rc-strip.is-dragging * { pointer-events: none; }
 .rc-strip__item { position: relative; flex: none; height: 460px; border-radius: var(--rc-radius-l); overflow: hidden; color: #fff !important; text-decoration: none !important; scroll-snap-align: start; }
 .rc-strip__item:nth-child(4n+1) { width: 380px; } .rc-strip__item:nth-child(4n+2) { width: 300px; } .rc-strip__item:nth-child(4n+3) { width: 420px; } .rc-strip__item:nth-child(4n) { width: 320px; }
 .rc-strip__item img { width: 100%; height: 100%; object-fit: cover; transition: transform .7s; }

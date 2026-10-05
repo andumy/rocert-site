@@ -566,6 +566,9 @@ img { height: auto; }
 /* ---------- Fluent Forms skin ---------- */
 .rc-form .ff-el-group { margin-bottom: 18px; }
 .rc-form .ff-el-input--label label { font-weight: 600; font-size: 14px; color: inherit; }
+.rc-form .ff-el-input--label { display: flex; align-items: center; gap: 6px; }
+.rc-form .ff-el-input--label > label { flex: 0 1 auto; width: auto; }
+.rc-form .ff-el-input--label .ff-el-tooltip { display: inline-flex; margin: 0; }
 .rc-form .ff-el-form-control { min-height: 48px; border-radius: 12px !important; border: 1px solid var(--rc-line) !important; background: var(--rc-bg) !important; font: inherit !important; color: var(--rc-ink) !important; padding: 12px 16px !important; }
 .rc-form textarea.ff-el-form-control { min-height: 120px; }
 .rc-form .ff-el-form-control:focus { border-color: var(--rc-blue) !important; box-shadow: 0 0 0 3px rgba(0,118,214,.15) !important; }
@@ -583,7 +586,7 @@ img { height: auto; }
 .rc-form .rc-type-tiles .ff_item_selected .ff-el-form-check-label, .rc-form .rc-type-tiles input:checked + span, .rc-form .rc-type-tiles .ff-el-form-check-label:has(input:checked) { background: var(--rc-blue); color: #fff; border-color: var(--rc-blue); transform: translateY(-6px); }
 .rc-form .rc-type-tiles input:focus-visible + span { outline: 3px solid var(--rc-blue-on-dark); }
 .rc-form .rc-chip-checks .ff-el-input--content { display: flex; flex-wrap: wrap; gap: 8px; }
-.rc-form .rc-chip-checks .ff-el-form-check { margin: 0 !important; }
+.rc-form .rc-chip-checks .ff-el-form-check { margin: 0 !important; position: relative; } /* anchors the hidden input: unanchored, focusing it scrolled the page */
 .rc-form .rc-chip-checks .ff-el-form-check-label { display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border-radius: 999px; border: 1px solid var(--rc-line); background: var(--rc-bg); font-family: var(--rc-head); font-weight: 700; font-size: 14px; cursor: pointer; }
 .rc-form .rc-chip-checks .ff-el-form-check-label:has(input:checked) { background: var(--rc-blue); color: #fff; border-color: var(--rc-blue); }
 .rc-form .rc-chip-checks input { position: absolute; opacity: 0; }

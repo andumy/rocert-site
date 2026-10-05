@@ -1,0 +1,222 @@
+[
+  {
+    "key": "hero-industry",
+    "file": "hero-industry.jpg",
+    "width": 2400,
+    "height": 1600,
+    "alt_ro": "Rafinărie modernă iluminată la amurg, pe un cer albastru",
+    "alt_en": "Modern refinery illuminated at dusk against a deep blue sky",
+    "source": "https://www.pexels.com/photo/32399141/",
+    "license": "Pexels License"
+  },
+  {
+    "key": "audit-documents",
+    "file": "audit-documents.jpg",
+    "width": 2400,
+    "height": 1350,
+    "alt_ro": "Auditor care analizează documente pe un clipboard într-un birou",
+    "alt_en": "Auditor reviewing documents on a clipboard in an office",
+    "source": "https://www.pexels.com/photo/39219775/",
+    "license": "Pexels License"
+  },
+  {
+    "key": "meeting",
+    "file": "meeting.jpg",
+    "width": 2400,
+    "height": 1600,
+    "alt_ro": "Echipă mică într-o ședință de lucru într-un birou modern",
+    "alt_en": "Small team in a working meeting in a modern office",
+    "source": "https://www.pexels.com/photo/7108454/",
+    "license": "Pexels License"
+  },
+  {
+    "key": "quality",
+    "file": "quality.jpg",
+    "width": 2400,
+    "height": 1603,
+    "alt_ro": "Măsurarea unei piese metalice cu șublerul digital",
+    "alt_en": "Measuring a steel part with a digital caliper",
+    "source": "https://www.pexels.com/photo/36003961/",
+    "license": "Pexels License"
+  },
+  {
+    "key": "medical",
+    "file": "medical.jpg",
+    "width": 2400,
+    "height": 1600,
+    "alt_ro": "Medici care examinează o radiografie într-o clinică",
+    "alt_en": "Doctors examining an X-ray in a clinic",
+    "source": "https://www.pexels.com/photo/8770713/",
+    "license": "Pexels License"
+  },
+  {
+    "key": "medical-devices",
+    "file": "medical-devices.jpg",
+    "width": 2400,
+    "height": 1601,
+    "alt_ro": "Specialist în echipament steril într-o cameră curată de producție",
+    "alt_en": "Technician in sterile gear walking through a cleanroom production area",
+    "source": "https://www.pexels.com/photo/5118462/",
+    "license": "Pexels License"
+  },
+  {
+    "key": "logistics-warehouse",
+    "file": "logistics-warehouse.jpg",
+    "width": 2200,
+    "height": 1467,
+    "alt_ro": "Lucrători care transportă colete printre rafturile unui depozit",
+    "alt_en": "Workers carrying parcels between racks in a distribution warehouse",
+    "source": "https://www.pexels.com/photo/4487383/",
+    "license": "Pexels License"
+  },
+  {
+    "key": "environment",
+    "file": "environment.jpg",
+    "width": 2400,
+    "height": 1566,
+    "alt_ro": "Parc eolian cu turbine sub un cer albastru",
+    "alt_en": "Wind farm with turbines under a clear blue sky",
+    "source": "https://www.pexels.com/photo/15418504/",
+    "license": "Pexels License"
+  },
+  {
+    "key": "energy",
+    "file": "energy.jpg",
+    "width": 1600,
+    "height": 1200,
+    "alt_ro": "Panouri solare fotovoltaice într-un parc solar",
+    "alt_en": "Photovoltaic solar panels in a solar park",
+    "source": "https://www.pexels.com/photo/35501735/",
+    "license": "Pexels License"
+  },
+  {
+    "key": "safety",
+    "file": "safety.jpg",
+    "width": 2400,
+    "height": 1600,
+    "alt_ro": "Ingineri cu căști de protecție și veste reflectorizante analizând planuri pe șantier",
+    "alt_en": "Engineers in hard hats and high-visibility vests reviewing plans on site",
+    "source": "https://www.pexels.com/photo/8961146/",
+    "license": "Pexels License"
+  },
+  {
+    "key": "road-safety",
+    "file": "road-safety.jpg",
+    "width": 2400,
+    "height": 1600,
+    "alt_ro": "Camioane pe o autostradă în ceață dimineața",
+    "alt_en": "Trucks on a highway in morning fog",
+    "source": "https://www.pexels.com/photo/8360517/",
+    "license": "Pexels License"
+  },
+  {
+    "key": "infosec",
+    "file": "infosec.jpg",
+    "width": 1800,
+    "height": 1200,
+    "alt_ro": "Culoar între rafturi de servere într-un centru de date",
+    "alt_en": "Aisle between server racks in a data center",
+    "source": "https://www.pexels.com/photo/4508751/",
+    "license": "Pexels License"
+  },
+  {
+    "key": "it-services",
+    "file": "it-services.jpg",
+    "width": 2400,
+    "height": 1602,
+    "alt_ro": "Specialist IT care monitorizează sisteme pe mai multe ecrane",
+    "alt_en": "IT specialist monitoring systems on multiple screens",
+    "source": "https://www.pexels.com/photo/8204322/",
+    "license": "Pexels License"
+  },
+  {
+    "key": "food",
+    "file": "food.jpg",
+    "width": 2400,
+    "height": 1600,
+    "alt_ro": "Lucrători în echipament igienic pe o linie de producție alimentară",
+    "alt_en": "Workers in hygienic clothing on a food production line",
+    "source": "https://www.pexels.com/photo/5953804/",
+    "license": "Pexels License"
+  },
+  {
+    "key": "food-packaging",
+    "file": "food-packaging.jpg",
+    "width": 2000,
+    "height": 1501,
+    "alt_ro": "Linie automată de îmbuteliere și ambalare",
+    "alt_en": "Automated bottling and packaging line",
+    "source": "https://www.pexels.com/photo/38336747/",
+    "license": "Pexels License"
+  },
+  {
+    "key": "governance",
+    "file": "governance.jpg",
+    "width": 2400,
+    "height": 1600,
+    "alt_ro": "Semnarea documentelor la o masă de ședință",
+    "alt_en": "Signing documents at a meeting table",
+    "source": "https://www.pexels.com/photo/6814526/",
+    "license": "Pexels License"
+  },
+  {
+    "key": "compliance",
+    "file": "compliance.jpg",
+    "width": 2400,
+    "height": 1751,
+    "alt_ro": "Analiza unui contract și luarea de notițe în timpul unei întâlniri",
+    "alt_en": "Reviewing a contract and taking notes during a meeting",
+    "source": "https://www.pexels.com/photo/7731352/",
+    "license": "Pexels License"
+  },
+  {
+    "key": "procurement",
+    "file": "procurement.jpg",
+    "width": 2400,
+    "height": 1600,
+    "alt_ro": "Navă portcontainer pe mare, văzută din aer prin ceață",
+    "alt_en": "Container ship at sea seen from above through fog",
+    "source": "https://www.pexels.com/photo/23221406/",
+    "license": "Pexels License"
+  },
+  {
+    "key": "construction",
+    "file": "construction.jpg",
+    "width": 2400,
+    "height": 1600,
+    "alt_ro": "Macarale turn pe un șantier de construcții la apus",
+    "alt_en": "Tower cranes on a construction site at dusk",
+    "source": "https://www.pexels.com/photo/10143241/",
+    "license": "Pexels License"
+  },
+  {
+    "key": "bim",
+    "file": "bim.jpg",
+    "width": 2400,
+    "height": 1600,
+    "alt_ro": "Arhitecți care lucrează la un model 3D și planuri pe calculator",
+    "alt_en": "Architects working on a 3D model and drawings on computer screens",
+    "source": "https://www.pexels.com/photo/5582590/",
+    "license": "Pexels License"
+  },
+  {
+    "key": "certificate",
+    "file": "certificate.jpg",
+    "width": 2400,
+    "height": 1600,
+    "alt_ro": "Semnarea unui document oficial cu pixul, prim-plan",
+    "alt_en": "Close-up of signing an official document with a pen",
+    "source": "https://www.pexels.com/photo/8428067/",
+    "license": "Pexels License"
+  },
+  {
+    "key": "portrait-office",
+    "file": "portrait-office.jpg",
+    "width": 1600,
+    "height": 2400,
+    "alt_ro": "Inginer cu cască de protecție care parcurge o hală industrială",
+    "alt_en": "Engineer in a hard hat walking through an industrial hall",
+    "source": "https://www.pexels.com/photo/29988954/",
+    "license": "Pexels License"
+  }
+]

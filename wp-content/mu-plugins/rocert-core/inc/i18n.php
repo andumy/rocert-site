@@ -1,0 +1,128 @@
+<?php
+defined('ABSPATH') || exit;
+
+function rocert_lang(): string
+{
+    if (function_exists('pll_current_language')) {
+        $lang = pll_current_language('slug');
+        if ($lang) {
+            return $lang;
+        }
+    }
+    return str_starts_with(get_locale(), 'en') ? 'en' : 'ro';
+}
+
+/** Strings used by the dynamic sections; page copy itself lives in the editor. */
+function rocert_t(string $key): string
+{
+    static $strings = [
+        'ro' => [
+            'serial' => 'Seria certificatului',
+            'serial_hint' => 'Codul unic tipărit pe certificat (ex. 3F2A9C1E-4B7D-4E2A-9C51-7A1D2E3F4B5C).',
+            'serial_placeholder' => 'Seria certificatului, ex. 3F2A9C1E-…',
+            'serial_invalid' => 'Seria introdusă nu are un format valid.',
+            'details_for' => 'Detalii %s',
+            'request_quote' => 'Solicită ofertă',
+            'logo_label' => 'ROCERT — Societatea Română pentru Certificare — Acasă',
+            'cookie_settings' => 'Setări cookie-uri',
+            'toc' => 'Cuprins',
+            'carousel' => 'Carusel',
+            'prev' => 'Înapoi',
+            'next' => 'Înainte',
+            'standard' => 'standard',
+            'standards' => 'standarde',
+            'details' => 'Detalii',
+            'all_standards' => 'Toate standardele',
+            'filter_label' => 'Filtrează după domeniu',
+            'all' => 'Toate',
+            'verify' => 'Verifică',
+            'verify_placeholder' => 'Număr certificat, ex. RO0123/1/0/1',
+            'verify_placeholder_short' => 'ex. RO0123/1/0/1',
+            'cert_number' => 'Număr certificat',
+            'verify_code' => 'Cod de verificare',
+            'verify_hint_nr' => 'Numărul se află pe certificat, sub denumirea organizației.',
+            'verify_hint_code' => 'Codul unic se află în subsolul certificatului.',
+            'verify_ph_code' => 'ex. 7f3c2a91-…',
+            'valid' => 'Certificat valid',
+            'valid_text' => 'Certificatul este în vigoare.',
+            'invalid' => 'Certificat nevalid',
+            'invalid_text' => 'Certificatul nu mai este în vigoare (suspendat, retras sau expirat).',
+            'organization' => 'Organizația',
+            'standard_label' => 'Standard',
+            'scope' => 'Domeniul certificat',
+            'not_found' => 'Nu am găsit niciun certificat cu această serie',
+            'not_found_text' => 'Verificați că ați copiat corect seria de pe certificat. Dacă bănuiți un certificat fals, anunțați-ne la office@rocert.ro.',
+            'unavailable' => 'Verificarea online este momentan indisponibilă',
+            'unavailable_text' => 'Pentru confirmarea unui certificat, contactați-ne la office@rocert.ro sau +40 21 224 26 39.',
+            'too_many' => 'Prea multe căutări într-un timp scurt. Încercați din nou peste un minut.',
+            'source_note' => 'Informațiile provin din registrul ROCERT al certificatelor emise. Pentru confirmări oficiale scrise, contactați-ne la office@rocert.ro.',
+            'searching' => 'Se caută…',
+            'anaf_button' => 'Preia datele de la ANAF',
+            'anaf_loading' => 'Se preiau datele…',
+            'anaf_ok' => 'Date preluate de la ANAF. Verificați-le și completați restul câmpurilor.',
+            'anaf_fail' => 'Nu am putut prelua automat datele. Vă rugăm să le completați manual.',
+            'anaf_invalid' => 'Introduceți un CUI valid (2–10 cifre, opțional cu prefixul RO).',
+            '404_title' => 'Pagina nu a fost găsită',
+            '404_text' => 'Pagina căutată nu există sau a fost mutată. Încercați una dintre paginile de mai jos.',
+            'home' => 'Acasă',
+            'certifications' => 'Certificări',
+            'verify_cert' => 'Verifică certificat',
+            'see_all' => 'Toate cele %d standarde',
+        ],
+        'en' => [
+            'serial' => 'Certificate serial',
+            'serial_hint' => 'The unique code printed on the certificate (e.g. 3F2A9C1E-4B7D-4E2A-9C51-7A1D2E3F4B5C).',
+            'serial_placeholder' => 'Certificate serial, e.g. 3F2A9C1E-…',
+            'serial_invalid' => 'The serial you entered is not in a valid format.',
+            'details_for' => '%s details',
+            'request_quote' => 'Request a quote',
+            'logo_label' => 'ROCERT — Romanian Society for Certification — Home',
+            'cookie_settings' => 'Cookie settings',
+            'toc' => 'Contents',
+            'carousel' => 'Carousel',
+            'prev' => 'Previous',
+            'next' => 'Next',
+            'standard' => 'standard',
+            'standards' => 'standards',
+            'details' => 'Details',
+            'all_standards' => 'All standards',
+            'filter_label' => 'Filter by area',
+            'all' => 'All',
+            'verify' => 'Verify',
+            'verify_placeholder' => 'Certificate no., e.g. RO0123/1/0/1',
+            'verify_placeholder_short' => 'e.g. RO0123/1/0/1',
+            'cert_number' => 'Certificate number',
+            'verify_code' => 'Verification code',
+            'verify_hint_nr' => 'The number is printed on the certificate, under the organisation name.',
+            'verify_hint_code' => 'The unique code is printed in the certificate footer.',
+            'verify_ph_code' => 'e.g. 7f3c2a91-…',
+            'valid' => 'Valid certificate',
+            'valid_text' => 'The certificate is in force.',
+            'invalid' => 'Certificate not valid',
+            'invalid_text' => 'The certificate is no longer in force (suspended, withdrawn or expired).',
+            'organization' => 'Organisation',
+            'standard_label' => 'Standard',
+            'scope' => 'Certified scope',
+            'not_found' => 'No certificate found with this serial',
+            'not_found_text' => 'Check that you copied the serial exactly as printed on the certificate. If you suspect a fake certificate, let us know at office@rocert.ro.',
+            'unavailable' => 'Online verification is temporarily unavailable',
+            'unavailable_text' => 'To confirm a certificate, contact us at office@rocert.ro or +40 21 224 26 39.',
+            'too_many' => 'Too many searches in a short time. Please try again in a minute.',
+            'source_note' => 'Data comes from the ROCERT register of issued certificates. For official written confirmation, contact office@rocert.ro.',
+            'searching' => 'Searching…',
+            'anaf_button' => 'Fetch company data (ANAF)',
+            'anaf_loading' => 'Fetching data…',
+            'anaf_ok' => 'Company data fetched from ANAF. Please check it and fill in the remaining fields.',
+            'anaf_fail' => 'We could not fetch the data automatically. Please fill it in manually.',
+            'anaf_invalid' => 'Enter a valid Romanian tax ID (2–10 digits, optionally prefixed with RO).',
+            '404_title' => 'Page not found',
+            '404_text' => 'The page you are looking for does not exist or has moved. Try one of the pages below.',
+            'home' => 'Home',
+            'certifications' => 'Certifications',
+            'verify_cert' => 'Verify a certificate',
+            'see_all' => 'All %d standards',
+        ],
+    ];
+    $lang = rocert_lang() === 'en' ? 'en' : 'ro';
+    return $strings[$lang][$key] ?? $strings['ro'][$key] ?? $key;
+}

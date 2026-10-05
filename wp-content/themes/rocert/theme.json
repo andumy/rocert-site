@@ -1,0 +1,131 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/theme.json",
+	"version": 3,
+	"settings": {
+		"appearanceTools": true,
+		"layout": {
+			"contentSize": "760px",
+			"wideSize": "1240px"
+		},
+		"color": {
+			"defaultPalette": false,
+			"defaultGradients": false,
+			"palette": [
+				{ "slug": "primary", "name": "Albastru (butoane, linkuri)", "color": "#0076D6" },
+				{ "slug": "primary-accent", "name": "Albastru deschis", "color": "#E6F2FE" },
+				{ "slug": "primary-alt", "name": "Albastru brand", "color": "#0087F5" },
+				{ "slug": "primary-alt-accent", "name": "Albastru pe fundal închis", "color": "#4DABFF" },
+				{ "slug": "main", "name": "Text", "color": "#1A1A1A" },
+				{ "slug": "main-accent", "name": "Gri închis", "color": "#303030" },
+				{ "slug": "dark", "name": "Fundal închis", "color": "#1E1E1E" },
+				{ "slug": "darker", "name": "Fundal foarte închis", "color": "#161616" },
+				{ "slug": "base", "name": "Alb", "color": "#FFFFFF" },
+				{ "slug": "secondary", "name": "Text secundar", "color": "#585E68" },
+				{ "slug": "tertiary", "name": "Fundal pagină", "color": "#F4F5F7" },
+				{ "slug": "border-light", "name": "Bordură deschisă", "color": "#E0E3E8" },
+				{ "slug": "border-dark", "name": "Bordură închisă", "color": "#3A3A3A" }
+			],
+			"gradients": []
+		},
+		"typography": {
+			"fluid": true,
+			"defaultFontSizes": false,
+			"fontFamilies": [
+				{
+					"slug": "primary",
+					"name": "Open Sans",
+					"fontFamily": "\"Open Sans\", system-ui, -apple-system, \"Segoe UI\", sans-serif",
+					"fontFace": [
+						{ "fontFamily": "Open Sans", "fontStyle": "normal", "fontWeight": "400 700", "fontDisplay": "swap", "src": ["file:./assets/fonts/opensans-latin.woff2"], "unicodeRange": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD" },
+						{ "fontFamily": "Open Sans", "fontStyle": "normal", "fontWeight": "400 700", "fontDisplay": "swap", "src": ["file:./assets/fonts/opensans-latin-ext.woff2"], "unicodeRange": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF" }
+					]
+				},
+				{
+					"slug": "heading",
+					"name": "Manrope",
+					"fontFamily": "Manrope, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+					"fontFace": [
+						{ "fontFamily": "Manrope", "fontStyle": "normal", "fontWeight": "500 800", "fontDisplay": "swap", "src": ["file:./assets/fonts/manrope-latin.woff2"], "unicodeRange": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD" },
+						{ "fontFamily": "Manrope", "fontStyle": "normal", "fontWeight": "500 800", "fontDisplay": "swap", "src": ["file:./assets/fonts/manrope-latin-ext.woff2"], "unicodeRange": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF" }
+					]
+				},
+				{ "slug": "monospace", "name": "Monospace", "fontFamily": "ui-monospace, SFMono-Regular, Menlo, monospace" }
+			],
+			"fontSizes": [
+				{ "slug": "x-small", "name": "XS", "size": "0.8125rem", "fluid": false },
+				{ "slug": "small", "name": "S", "size": "0.9375rem", "fluid": false },
+				{ "slug": "base", "name": "Normal", "size": "1.0625rem", "fluid": false },
+				{ "slug": "medium", "name": "M", "size": "1.25rem", "fluid": { "min": "1.125rem", "max": "1.25rem" } },
+				{ "slug": "large", "name": "L", "size": "2rem", "fluid": { "min": "1.5rem", "max": "2rem" } },
+				{ "slug": "x-large", "name": "XL", "size": "3.25rem", "fluid": { "min": "2.125rem", "max": "3.5rem" } },
+				{ "slug": "xx-large", "name": "XXL", "size": "4.5rem", "fluid": { "min": "2.75rem", "max": "4.75rem" } },
+				{ "slug": "xxx-large", "name": "Display", "size": "6.5rem", "fluid": { "min": "3rem", "max": "7rem" } }
+			]
+		},
+		"custom": {
+			"radius": { "s": "12px", "m": "20px", "l": "28px", "xl": "36px", "pill": "999px" },
+			"shadow": { "card": "0 24px 50px rgba(0,0,0,.12)", "float": "0 30px 70px rgba(0,0,0,.25)" }
+		}
+	},
+	"styles": {
+		"color": {
+			"background": "var:preset|color|tertiary",
+			"text": "var:preset|color|main"
+		},
+		"typography": {
+			"fontFamily": "var:preset|font-family|primary",
+			"fontSize": "var:preset|font-size|base",
+			"lineHeight": "1.65",
+			"fontWeight": "400"
+		},
+		"spacing": {
+			"blockGap": "1.25rem",
+			"padding": { "left": "clamp(16px, 4vw, 32px)", "right": "clamp(16px, 4vw, 32px)" }
+		},
+		"elements": {
+			"heading": {
+				"typography": {
+					"fontFamily": "var:preset|font-family|heading",
+					"fontWeight": "800",
+					"letterSpacing": "-0.035em",
+					"lineHeight": "1.06"
+				},
+				"color": { "text": "inherit" }
+			},
+			"h1": { "typography": { "fontSize": "var:preset|font-size|xx-large" } },
+			"h2": { "typography": { "fontSize": "var:preset|font-size|x-large" } },
+			"h3": { "typography": { "fontSize": "var:preset|font-size|large", "letterSpacing": "-0.025em" } },
+			"h4": { "typography": { "fontSize": "var:preset|font-size|medium", "letterSpacing": "-0.015em" } },
+			"link": {
+				"color": { "text": "#0068C2" },
+				"typography": { "textDecoration": "none" },
+				":hover": { "color": { "text": "#0062B3" }, "typography": { "textDecoration": "underline" } }
+			},
+			"button": {
+				"color": { "background": "var:preset|color|primary", "text": "var:preset|color|base" },
+				"border": { "radius": "999px", "width": "0" },
+				"typography": { "fontFamily": "var:preset|font-family|heading", "fontWeight": "700", "fontSize": "0.9375rem", "letterSpacing": "-0.01em", "lineHeight": "1.2" },
+				"spacing": { "padding": { "top": "0.95rem", "bottom": "0.95rem", "left": "1.6rem", "right": "1.6rem" } },
+				":hover": { "color": { "background": "#0062B3", "text": "var:preset|color|base" } },
+				":focus": { "outline": { "color": "#4DABFF", "offset": "2px", "style": "solid", "width": "3px" } }
+			}
+		},
+		"blocks": {
+			"core/navigation": {
+				"typography": { "fontFamily": "var:preset|font-family|heading", "fontWeight": "600", "fontSize": "0.9375rem" }
+			},
+			"core/details": {
+				"typography": { "fontSize": "var:preset|font-size|base" }
+			}
+		}
+	},
+	"templateParts": [
+		{ "name": "header", "title": "Header (RO)", "area": "header" },
+		{ "name": "header-en", "title": "Header (EN)", "area": "header" },
+		{ "name": "footer", "title": "Footer (RO)", "area": "footer" },
+		{ "name": "footer-en", "title": "Footer (EN)", "area": "footer" }
+	],
+	"customTemplates": [
+		{ "name": "page-text", "title": "Pagină text (titlu + conținut)", "postTypes": ["page"] }
+	]
+}

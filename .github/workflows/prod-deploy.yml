@@ -1,0 +1,60 @@
+name: Deploy to Production
+
+on:
+  release:
+    types: [ published ]
+  workflow_dispatch:
+
+env:
+  APP_PATH: /var/www/rocertsite
+  PROJECT_ID: 99ebbc7d-c022-44c5-bfcd-551bfb9708b9
+
+jobs:
+  deploy-to-production:
+    runs-on: [self-hosted, rocert-site]
+
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.10.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Configure SSH connection reuse
+        run: |
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          cat >> ~/.ssh/config <<'SSHEOF'
+          Host *
+            StrictHostKeyChecking accept-new
+            ControlMaster auto
+            ControlPath ~/.ssh/cm-%r@%h:%p
+            ControlPersist 120s
+          SSHEOF
+          chmod 600 ~/.ssh/config
+
+      - name: Build env
+        run: |
+          curl -1sLf 'https://artifacts-cli.infisical.com/setup.deb.sh' | sudo -E bash
+          sudo apt-get update && sudo apt-get install -y infisical
+          export INFISICAL_TOKEN=$(infisical login \
+            --method=universal-auth \
+            --client-id=${{ secrets.INFISICAL_ID }} \
+            --client-secret=${{ secrets.INFISICAL_SECRET }} \
+            --silent \
+            --plain) && \
+            cat deploy/.env.static > .env && \
+            infisical export --env=prod --projectId=${{ env.PROJECT_ID }} >> .env
+
+      - name: Sync files to production server
+        run: |
+          rsync -raog --exclude /.git/ --exclude /.github/ --exclude /.idea/ --exclude /wordpress/ --exclude /build/ --exclude /node_modules/ ./ ${{ secrets.SSH_USER }}@${{ secrets.REMOTE_SERVER }}:${{ env.APP_PATH }} --delete
+
+      - name: Build production environment
+        run: |
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.REMOTE_SERVER }} " \
+          cd ${{ env.APP_PATH }} && \
+          make start-prod"

@@ -1,0 +1,20 @@
+/* Editor-only helpers for the ROCERT blocks */
+.rocert-ssr { pointer-events: none; min-height: 40px; }
+.rocert-ssr .components-placeholder { pointer-events: auto; }
+.rocert-image-control img { display: block; width: 100%; height: 120px; object-fit: cover; border-radius: 8px; margin-bottom: 8px; }
+.rocert-image-control__buttons { display: flex; gap: 8px; align-items: center; }
+.rocert-repeater { margin: 16px 0; }
+.rocert-repeater__label { font-weight: 600; margin: 0 0 8px; }
+.rocert-repeater__item { border: 1px solid #ddd; border-radius: 4px; margin-bottom: 8px; }
+.rocert-repeater__actions { display: flex; gap: 4px; justify-content: flex-end; }
+.rocert-repeater .components-base-control { margin-bottom: 12px; }
+.rocert-help { color: #757575; font-size: 12px; }
+.rocert-placeholder { position: absolute; inset: 0; display: grid; place-items: center; background: #e9ecf0; color: #585E68; font-size: 14px; }
+.rocert-hscroll-edit > .block-editor-inner-blocks > .block-editor-block-list__layout { display: flex; gap: 20px; flex-wrap: nowrap; }
+.rocert-hscroll-edit .wp-block-rocert-tile { flex: none; }
+.rocert-fake-button { display: inline-block; margin-top: auto; padding: 10px 20px; border-radius: 999px; background: #fff; color: #0076D6; font-weight: 700; align-self: flex-start; }
+.rocert-empty { padding: 24px; border: 1px dashed #c3c4c7; border-radius: 8px; color: #585E68; font-size: 13px; text-align: center; }
+/* Page-level ROCERT blocks span the whole canvas, like on the site */
+.is-root-container > .wp-block[data-type^="rocert/"] { max-width: none !important; margin-left: 0 !important; margin-right: 0 !important; }
+.is-root-container.has-global-padding { padding-left: 0 !important; padding-right: 0 !important; }
+.is-root-container > .wp-block:not([data-type^="rocert/"]) { padding-left: 24px; padding-right: 24px; }

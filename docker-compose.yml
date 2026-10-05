@@ -1,0 +1,23 @@
+services:
+  rocert-site-app:
+    container_name: rocert-site-app
+    build:
+      context: ./
+      dockerfile: docker/Dockerfile
+      args:
+        uid: ${HOST_UID:-1000}
+        gid: ${HOST_GID:-1000}
+    restart: always
+    env_file: .env
+    environment:
+      WORDPRESS_DB_HOST: ${DB_HOST}:${DB_PORT}
+      WORDPRESS_DB_NAME: ${DB_DATABASE}
+      WORDPRESS_DB_USER: ${DB_USERNAME}
+      WORDPRESS_DB_PASSWORD: ${DB_PASSWORD}
+      WORDPRESS_TABLE_PREFIX: rc_
+    volumes:
+      - ./wordpress:/var/www/html
+      - ./wp-content/themes/rocert:/var/www/html/wp-content/themes/rocert
+      - ./wp-content/mu-plugins:/var/www/html/wp-content/mu-plugins
+      - ./deploy:/opt/rocert/deploy:ro
+      - ./content:/opt/rocert/content:ro

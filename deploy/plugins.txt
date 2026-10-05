@@ -1,0 +1,9 @@
+# slug version — pinned; bump deliberately after checking the changelog and Patchstack/WPScan.
+wordfence 9.0.2
+wordpress-seo 28.6
+wp-mail-smtp 4.10.0
+google-site-kit 1.188.0
+polylang 3.8.10
+wp-cloudflare-page-cache 5.3.6
+webp-uploads 2.7.1
+fluentform 6.2.15

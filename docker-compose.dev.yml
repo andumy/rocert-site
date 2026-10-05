@@ -1,0 +1,48 @@
+services:
+  rocert-site-db:
+    container_name: rocert-site-db
+    image: mysql:8.4
+    restart: always
+    volumes:
+      - rocert-site-db:/var/lib/mysql
+    ports:
+      - ${DB_EXPOSED_PORT:-33062}:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOTPASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-p${DB_ROOTPASSWORD}"]
+      interval: 5s
+      retries: 20
+    networks:
+      - rocert-site
+
+  rocert-site-mail:
+    container_name: rocert-site-mail
+    image: axllent/mailpit:latest
+    restart: always
+    ports:
+      - ${MAIL_UI_PORT:-8026}:8025
+    networks:
+      - rocert-site
+
+  rocert-site-app:
+    extends:
+      file: docker-compose.yml
+      service: rocert-site-app
+    depends_on:
+      rocert-site-db:
+        condition: service_healthy
+    ports:
+      - ${APP_PORT}:80
+    networks:
+      - rocert-site
+
+volumes:
+  rocert-site-db:
+
+networks:
+  rocert-site:
+    name: rocert-site

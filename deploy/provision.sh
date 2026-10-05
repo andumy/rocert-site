@@ -19,9 +19,11 @@ done
 
 if ! wp core is-installed 2>/dev/null; then
   log "Installing WordPress"
+  # Without WP_ADMIN_PASSWORD (production) the admin gets a random password that is never printed or stored:
+  # set your own with "Am uitat parola" on wp-login.php, or over SSH (see deploy/README.md).
   wp core install --url="${APP_URL}" --title="${WP_TITLE:-ROCERT}" \
-    --admin_user="${WP_ADMIN_USER}" --admin_password="${WP_ADMIN_PASSWORD}" \
-    --admin_email="${WP_ADMIN_EMAIL}" --skip-email
+    --admin_user="${WP_ADMIN_USER}" --admin_password="${WP_ADMIN_PASSWORD:-$(openssl rand -base64 33)}" \
+    --admin_email="${WP_ADMIN_EMAIL}" --skip-email >/dev/null
 fi
 
 log "Language"

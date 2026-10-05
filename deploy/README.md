@@ -19,6 +19,15 @@ GitHub repository secrets: `SSH_PRIVATE_KEY`, `SSH_USER` (andumy), `REMOTE_SERVE
 
 The host's nginx (same vhost pattern as grouptherapy, TLS via `certbot --nginx`) forwards the domain to `127.0.0.1:$APP_PORT` (8090) and passes `X-Forwarded-For` / `X-Forwarded-Proto`; Apache restores the visitor's IP from `X-Forwarded-For`, trusting only private addresses and Cloudflare's ranges.
 
+## Admin password
+
+`WP_ADMIN_PASSWORD` is deliberately **not** in Infisical, so it never lands in the server's `.env` or the container
+environment. On the first install the admin gets a random password that is never printed or stored; set your own over SSH:
+
+    docker exec -it -u rocert rocert-site-app wp user update <WP_ADMIN_USER> --prompt=user_pass
+
+(Once SMTP is configured, *Lost your password?* on `wp-login.php` works too.)
+
 ## Password wall (pre-launch)
 
 `BASIC_AUTH_USER` + `BASIC_AUTH_PASSWORD` in Infisical `prod` → every page asks for credentials

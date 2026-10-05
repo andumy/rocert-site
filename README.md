@@ -86,4 +86,4 @@ While `ROCERT_API_URL` is empty and the environment is not production, demo data
 ## Environment variables
 
 Secrets live in Infisical (`prod`); `deploy/.env.local` has throwaway local values. See `docker/wp/config.php` for how each is used:
-`APP_ENV`, `APP_URL`, `APP_PORT`, `DB_*`, `WP_ADMIN_*`, `SMTP_*`, `FORM_RECIPIENT`, `ROCERT_API_URL`, `ROCERT_API_TOKEN`, `TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET`, `BASIC_AUTH_USER` / `BASIC_AUTH_PASSWORD` (pre-launch wall), optional `WORDPRESS_*` salts.
+`APP_ENV`, `APP_URL`, `APP_PORT`, `DB_*`, `WP_ADMIN_USER`, `WP_ADMIN_EMAIL`, `SMTP_*`, `FORM_RECIPIENT`, `ROCERT_API_URL`, `ROCERT_API_TOKEN`, `TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET`, `BASIC_AUTH_USER` / `BASIC_AUTH_PASSWORD` (pre-launch wall), optional `WORDPRESS_*` salts. `WP_ADMIN_PASSWORD` is local-only: on the server it is never set, so no admin password sits in `.env` (see `deploy/README.md`).

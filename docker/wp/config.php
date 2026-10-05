@@ -16,11 +16,11 @@ if (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https') {
     $_SERVER['HTTPS'] = 'on';
 }
 
-/* The shared MariaDB runs with ANSI_QUOTES, which turns "text" into a column name and breaks Yoast/Wordfence
-   queries. WordPress already strips other incompatible modes per connection; add this one (pre-initialised
-   hook, since the database connects before any plugin loads). */
+/* The shared MariaDB runs in ANSI mode. WordPress strips the ANSI flag per connection but not what it expands
+   to: ANSI_QUOTES turns "text" into a column name (broke Yoast/Wordfence), PIPES_AS_CONCAT turns `||` from OR
+   into concatenation. Strip those too (pre-initialised hook: the database connects before any plugin loads). */
 $GLOBALS['wp_filter']['incompatible_sql_modes'][10][] = [
-    'function' => static fn (array $modes): array => array_merge($modes, ['ANSI_QUOTES']),
+    'function' => static fn (array $modes): array => array_merge($modes, ['ANSI_QUOTES', 'PIPES_AS_CONCAT', 'IGNORE_SPACE', 'REAL_AS_FLOAT']),
     'accepted_args' => 1,
 ];
 

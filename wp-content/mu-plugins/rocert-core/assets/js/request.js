@@ -14,6 +14,76 @@
 		return e;
 	}
 
+	/* ---- Draft: saved on this device while it is filled in, restored on return, cleared once sent ----
+	   Runs before the repeaters and signature pads, which build themselves from the restored values. */
+	(function draft() {
+		var anchor = document.querySelector('[data-rc-repeater]');
+		var form = anchor && anchor.closest('form');
+		if (!form) return;
+		var en = (document.documentElement.lang || '').indexOf('en') === 0;
+		var KEY = 'rocert-request-draft:' + location.pathname, DAYS = 30, sent = false, timer = null;
+		var storage = null;
+		try { storage = window.localStorage; storage.getItem(KEY); } catch (e) { storage = null; }
+		if (!storage) return;
+		function skip(name) { return !name || name.charAt(0) === '_' || name === 'gdpr-agreement' || name === 'cf-turnstile-response' || name.indexOf('nonce') !== -1; }
+		function collect() {
+			var v = {};
+			[].forEach.call(form.elements, function (f) {
+				if (skip(f.name) || f.type === 'submit' || f.type === 'button' || f.type === 'file') return;
+				if (f.type === 'checkbox') { (v[f.name] = v[f.name] || []); if (f.checked) v[f.name].push(f.value); }
+				else if (f.type === 'radio') { if (f.checked) v[f.name] = f.value; }
+				else if (f.value !== '') v[f.name] = f.value;
+			});
+			return v;
+		}
+		function save() {
+			if (sent) return;
+			clearTimeout(timer);
+			timer = setTimeout(function () {
+				try { storage.setItem(KEY, JSON.stringify({ t: Date.now(), v: collect() })); } catch (e) { /* full or blocked: the form still works */ }
+			}, 400);
+		}
+		function clear() { try { storage.removeItem(KEY); } catch (e) {} }
+
+		var saved = null;
+		try { saved = JSON.parse(storage.getItem(KEY) || 'null'); } catch (e) { saved = null; }
+		if (saved && (Date.now() - saved.t > DAYS * 864e5)) { clear(); saved = null; }
+		var restored = false;
+		if (saved && saved.v) {
+			[].forEach.call(form.elements, function (f) {
+				if (skip(f.name) || !(f.name in saved.v)) return;
+				var val = saved.v[f.name];
+				if (f.type === 'checkbox') f.checked = [].concat(val).indexOf(f.value) !== -1;
+				else if (f.type === 'radio') f.checked = f.value === val;
+				else f.value = val;
+				restored = true;
+			});
+		}
+
+		var note = el('div', 'rc-draft-note');
+		note.setAttribute('role', 'status');
+		var text = el('span', '', restored
+			? (en ? 'We restored what you entered earlier on this device.' : 'Am restaurat datele completate anterior pe acest dispozitiv.')
+			: (en ? 'Your progress is saved on this device until you send the request.' : 'Progresul se salvează pe acest dispozitiv până la trimiterea cererii.'));
+		note.appendChild(text);
+		if (restored) {
+			var reset = el('button', 'rc-draft-note__reset', en ? 'Start over' : 'Începe din nou');
+			reset.type = 'button';
+			reset.addEventListener('click', function () { sent = true; clear(); location.reload(); });
+			note.appendChild(reset);
+			note.classList.add('is-restored');
+		}
+		form.insertBefore(note, form.firstChild);
+
+		form.addEventListener('input', save);
+		form.addEventListener('change', save);
+		if (window.jQuery) {
+			window.jQuery(form).on('fluentform_submission_success', function () { sent = true; clearTimeout(timer); clear(); note.remove(); });
+			/* Fluent applies its conditional logic on load; re-run it for the restored answers */
+			if (restored) window.jQuery(function () { window.jQuery(form).find('input:checked, select').trigger('change'); });
+		}
+	})();
+
 	/* ---- Row repeaters ---- */
 	document.querySelectorAll('[data-rc-repeater]').forEach(function (host) {
 		var form = host.closest('form');
@@ -101,6 +171,7 @@
 		bar.append(el('span', 'rc-sign__hint', host.dataset.hint), clear);
 		host.append(canvas, bar);
 		input.parentNode.insertBefore(host, input);
+		if (input.value) host.classList.add('is-signed'); /* restored from a draft */
 
 		var ctx = canvas.getContext('2d');
 		var drawing = false, w = 0, h = 0;

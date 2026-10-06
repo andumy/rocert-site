@@ -24,7 +24,8 @@
 				['cc_cookie', 'rocert.ro', 'Memorează opțiunile tale privind cookie-urile', '6 luni'],
 				['__cf_bm', 'Cloudflare', 'Distinge vizitatorii reali de traficul automatizat', '30 de minute'],
 				['cf_clearance', 'Cloudflare', 'Confirmă trecerea unei verificări de securitate', 'până la 1 an'],
-				['wfwaf-authcookie-*', 'rocert.ro (Wordfence)', 'Securitate; doar pentru administratorii autentificați', 'sesiunea de administrare']
+				['wfwaf-authcookie-*', 'rocert.ro (Wordfence)', 'Securitate; doar pentru administratorii autentificați', 'sesiunea de administrare'],
+				['rocert-request-draft:* (local storage)', 'rocert.ro', 'Ciorna cererii de certificare, pe acest dispozitiv', 'până la trimitere, max. 30 de zile']
 			]),
 			analytics: table('ro', [
 				['_ga', 'Google (Analytics 4)', 'Distinge vizitatorii unici în statisticile agregate', '2 ani'],
@@ -36,7 +37,8 @@
 				['cc_cookie', 'rocert.ro', 'Stores your cookie preferences', '6 months'],
 				['__cf_bm', 'Cloudflare', 'Distinguishes real visitors from automated traffic', '30 minutes'],
 				['cf_clearance', 'Cloudflare', 'Confirms that a security challenge has been passed', 'up to 1 year'],
-				['wfwaf-authcookie-*', 'rocert.ro (Wordfence)', 'Security; only for logged-in administrators', 'administration session']
+				['wfwaf-authcookie-*', 'rocert.ro (Wordfence)', 'Security; only for logged-in administrators', 'administration session'],
+				['rocert-request-draft:* (local storage)', 'rocert.ro', 'Draft of the certification request, on this device', 'until sent, max. 30 days']
 			]),
 			analytics: table('en', [
 				['_ga', 'Google (Analytics 4)', 'Distinguishes unique visitors in aggregated statistics', '2 years'],

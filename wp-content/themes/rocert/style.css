@@ -1014,3 +1014,7 @@ ul.is-style-chips > li { margin: 0 !important; display: inline-flex; align-items
 	.rc-repeater__remove, .rc-repeater__row--compact .rc-repeater__remove { top: 12px; bottom: auto; right: 12px; }
 	.rc-sign__pad { height: 160px; }
 }
+.rc-draft-note { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 16px; margin: 0 0 20px; padding: 10px 14px; border-radius: 12px; background: var(--rc-bg); font-size: 13.5px; color: var(--rc-muted); }
+.rc-draft-note.is-restored { background: #E8F2FC; color: var(--rc-ink); }
+.rc-draft-note__reset { background: none; border: 0; padding: 0; font: inherit; font-weight: 600; color: var(--rc-ink); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.rc-draft-note__reset:focus-visible { outline: 3px solid var(--rc-blue); outline-offset: 2px; }

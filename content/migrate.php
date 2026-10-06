@@ -101,6 +101,12 @@ $migrations = [
             WP_CLI::log("  form {$key} → {$id}");
         }
     },
+    /* Request form: fax for the organisation and the contact person, EA sectors required */
+    '2026-10-06-request-form-v3' => static function (): void {
+        require_once __DIR__ . '/lib/urls.php';
+        require_once __DIR__ . '/lib/forms.php';
+        ff_save_request_forms();
+    },
 ];
 
 $done = (array) get_option('rocert_migrations', []);

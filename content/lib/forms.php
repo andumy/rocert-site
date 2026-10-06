@@ -243,6 +243,9 @@ function ff_request_form(string $lang): array
         ff_cols([
             [ff_text('phone', $T('Telefon', 'Phone'), true, $l['req'], ['type' => 'tel'])],
             [ff_text('mobile', $T('Mobil', 'Mobile'), false, $l['req'], ['type' => 'tel'])],
+            [ff_text('fax', 'Fax', false, $l['req'], ['type' => 'tel'])],
+        ]),
+        ff_cols([
             [ff_email('email', 'E-mail', true, $l['req'], $l['email_bad'])],
             [ff_text('website', 'Website', false, $l['req'], ['type' => 'url'])],
         ]),
@@ -260,6 +263,7 @@ function ff_request_form(string $lang): array
         ff_cols([
             [ff_text('contact_phone', $T('Telefon', 'Phone'), true, $l['req'], ['type' => 'tel', 'admin' => $T('Persoană de contact — Telefon', 'Contact person — Phone')])],
             [ff_email('contact_email', 'E-mail', true, $l['req'], $l['email_bad'])],
+            [ff_text('contact_fax', 'Fax', false, $l['req'], ['type' => 'tel', 'admin' => $T('Persoană de contact — Fax', 'Contact person — Fax')])],
         ]),
 
         ff_section($T('2. Modelul de certificare dorit', '2. Requested certification'), $T('Selectați unul sau mai multe standarde.', 'Select one or more standards.')),
@@ -270,7 +274,7 @@ function ff_request_form(string $lang): array
 
         ff_section($T('3. Domeniul de activitate', '3. Scope of activity'), $T('Domeniul pentru care solicitați certificarea, cu codurile CAEN aferente.', 'The scope you want certified, with the related NACE codes.')),
         ff_textarea('scope_description', $T('Descrierea activității de certificat', 'Description of the activity to be certified'), true, $l['req'], ['placeholder' => $T('ex. Proiectarea și execuția de lucrări de construcții civile și industriale', 'e.g. Design and execution of civil and industrial construction works')]),
-        ff_choice('input_checkbox', 'ea_codes', $T('Domenii EA (coduri CAEN)', 'EA sectors (NACE codes)'), $ea, false, $l['req'], ['class' => 'rc-ea-grid']),
+        ff_choice('input_checkbox', 'ea_codes', $T('Domenii EA (coduri CAEN)', 'EA sectors (NACE codes)'), $ea, true, $l['req'], ['class' => 'rc-ea-grid']),
 
         ff_section($T('4. Informații pentru stabilirea duratei auditului', '4. Information to determine audit duration'), $T('4.1 Toate locațiile unde se desfășoară activitățile (sediu social, sucursale, puncte de lucru, depozite, laboratoare). P = permanent, T = temporar/sezonier, R = part-time.', '4.1 All sites where the activities take place (registered office, branches, work points, warehouses, laboratories). P = permanent, T = temporary/seasonal, R = part-time.')),
         ff_number('total_employees', $T('Număr total de angajați', 'Total number of employees'), ['required' => true, 'msg' => $l['req']]),

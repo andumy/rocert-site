@@ -24,11 +24,75 @@ function rocert_migrate_replace(array $slugs, array $replacements): void
     }
 }
 
+/**
+ * Edit block attributes on pages: $fn receives each block (recursively) by reference and returns true when it
+ * changed it. $slugs = null means every page.
+ */
+function rocert_migrate_blocks(?array $slugs, callable $fn): void
+{
+    $pages = $slugs === null
+        ? get_posts(['post_type' => 'page', 'post_status' => 'any', 'numberposts' => -1])
+        : array_filter(array_map('get_page_by_path', $slugs));
+    $walk = static function (array &$blocks) use (&$walk, $fn): bool {
+        $changed = false;
+        foreach ($blocks as &$block) {
+            $changed = $fn($block) || $changed;
+            if (!empty($block['innerBlocks'])) {
+                $changed = $walk($block['innerBlocks']) || $changed;
+            }
+        }
+        return $changed;
+    };
+    foreach ($pages as $page) {
+        $blocks = parse_blocks($page->post_content);
+        if ($walk($blocks)) {
+            wp_update_post(['ID' => $page->ID, 'post_content' => wp_slash(serialize_blocks($blocks))]);
+            WP_CLI::log("  updated /{$page->post_name}/");
+        }
+    }
+}
+
+/** Whether a block or anything inside it contains $needle in its saved HTML. */
+function rocert_block_contains(array $block, string $needle): bool
+{
+    return str_contains(serialize_block($block), $needle);
+}
+
 $migrations = [
     '2026-10-06-verify-legend-invalid' => static fn () => rocert_migrate_replace(
         ['verifica-certificat', 'verify-certificate'],
         ['"title":"Nevalid"' => '"title":"Invalid"', '"title":"Not valid"' => '"title":"Invalid"']
     ),
+    /* Mobile: no image under the "already certified?" and "want your own certificate?" CTAs */
+    '2026-10-06-split-hide-media-mobile' => static fn () => rocert_migrate_blocks(null, static function (array &$b): bool {
+        if ($b['blockName'] !== 'rocert/split' || !empty($b['attrs']['hideMediaMobile'])) {
+            return false;
+        }
+        if (!rocert_block_contains($b, 'Aveți deja un certificat?') && !rocert_block_contains($b, 'Already certified?')
+            && !rocert_block_contains($b, 'unde găsesc seria?') && !rocert_block_contains($b, 'where is the serial')) {
+            return false;
+        }
+        $b['attrs']['hideMediaMobile'] = true;
+        return true;
+    }),
+    /* Home stats: the [NR] placeholder and the founding year become clients and years of experience */
+    '2026-10-06-home-stats' => static fn () => rocert_migrate_blocks(['acasa', 'home'], static function (array &$b): bool {
+        if ($b['blockName'] !== 'rocert/statement' || empty($b['attrs']['stats'])) {
+            return false;
+        }
+        $en = str_contains(serialize_block($b), 'the year ROCERT was founded') || str_contains(serialize_block($b), 'active certificates in our register');
+        $changed = false;
+        foreach ($b['attrs']['stats'] as &$stat) {
+            if ($stat['value'] === '1997') {
+                $stat = ['value' => '29', 'label' => $en ? 'years of experience' : 'ani de experiență'];
+                $changed = true;
+            } elseif ($stat['value'] === '[NR]') {
+                $stat = ['value' => '+2000', 'label' => $en ? 'certified clients' : 'clienți certificați'];
+                $changed = true;
+            }
+        }
+        return $changed;
+    }),
 ];
 
 $done = (array) get_option('rocert_migrations', []);

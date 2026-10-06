@@ -100,7 +100,7 @@ function rs_category_page(array $cat, array $stds, string $lang, array $media): 
     $mig = rb_heading(esc_html(rs_l($lang, 'migrate_h')), 2)
         . rb_p(esc_html(rs_l($lang, 'migrate_p')), 'is-style-lead')
         . rb_buttons([[rs_l($lang, 'migrate_btn'), rs_url($lang, 'request') . '?tip=migration' . ($featured ? '&standard=' . $featured['key'] : '')]]);
-    $out .= rb_block('split', ['side' => 'right', 'image' => $media[$featured['image'] ?? $cat['image']] ?? 0], $mig);
+    $out .= rb_block('split', ['side' => 'right', 'image' => $media[$featured['image'] ?? $cat['image']] ?? 0, 'hideMediaMobile' => true], $mig);
     return $out;
 }
 

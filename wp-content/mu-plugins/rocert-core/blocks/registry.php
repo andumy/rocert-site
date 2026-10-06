@@ -41,6 +41,7 @@ function rocert_block_schema(): array
                 'badgeValue' => ['control' => 'text', 'label' => 'Insignă: cifră (opțional)', 'default' => ''],
                 'badgeText' => ['control' => 'text', 'label' => 'Insignă: text', 'default' => ''],
                 'tall' => ['control' => 'toggle', 'label' => 'Imagine înaltă', 'default' => false],
+                'hideMediaMobile' => ['control' => 'toggle', 'label' => 'Ascunde imaginea pe mobil', 'default' => false],
             ]],
         'carousel' => ['title' => 'Carusel de carduri', 'icon' => 'slides', 'description' => 'Carduri derulabile (tragere, săgeți, derulare automată).',
             'inner' => ['allowed' => ['rocert/tile'], 'template' => [['rocert/tile'], ['rocert/tile'], ['rocert/tile']], 'orientation' => 'horizontal'],

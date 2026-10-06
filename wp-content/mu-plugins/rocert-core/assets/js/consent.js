@@ -9,6 +9,42 @@
 		window.gtag('consent', 'update', { analytics_storage: analytics ? 'granted' : 'denied' });
 	}
 
+	/* The cookies each category sets, as declared on the cookie policy page (keep the two in sync) */
+	function table(lang, rows) {
+		return {
+			headers: lang === 'en'
+				? { name: 'Cookie', provider: 'Provider', desc: 'Purpose', duration: 'Duration' }
+				: { name: 'Cookie', provider: 'Furnizor', desc: 'Scop', duration: 'Durată' },
+			body: rows.map(function (r) { return { name: r[0], provider: r[1], desc: r[2], duration: r[3] }; })
+		};
+	}
+	var cookies = {
+		ro: {
+			necessary: table('ro', [
+				['cc_cookie', 'rocert.ro', 'Memorează opțiunile tale privind cookie-urile', '6 luni'],
+				['__cf_bm', 'Cloudflare', 'Distinge vizitatorii reali de traficul automatizat', '30 de minute'],
+				['cf_clearance', 'Cloudflare', 'Confirmă trecerea unei verificări de securitate', 'până la 1 an'],
+				['wfwaf-authcookie-*', 'rocert.ro (Wordfence)', 'Securitate; doar pentru administratorii autentificați', 'sesiunea de administrare']
+			]),
+			analytics: table('ro', [
+				['_ga', 'Google (Analytics 4)', 'Distinge vizitatorii unici în statisticile agregate', '2 ani'],
+				['_ga_&lt;ID&gt;', 'Google (Analytics 4)', 'Păstrează starea sesiunii pentru statisticile agregate', '2 ani']
+			])
+		},
+		en: {
+			necessary: table('en', [
+				['cc_cookie', 'rocert.ro', 'Stores your cookie preferences', '6 months'],
+				['__cf_bm', 'Cloudflare', 'Distinguishes real visitors from automated traffic', '30 minutes'],
+				['cf_clearance', 'Cloudflare', 'Confirms that a security challenge has been passed', 'up to 1 year'],
+				['wfwaf-authcookie-*', 'rocert.ro (Wordfence)', 'Security; only for logged-in administrators', 'administration session']
+			]),
+			analytics: table('en', [
+				['_ga', 'Google (Analytics 4)', 'Distinguishes unique visitors in aggregated statistics', '2 years'],
+				['_ga_&lt;ID&gt;', 'Google (Analytics 4)', 'Keeps session state for aggregated statistics', '2 years']
+			])
+		}
+	};
+
 	CookieConsent.run({
 		revision: 1,
 		cookie: { name: 'cc_cookie', expiresAfterDays: 182, sameSite: 'Lax' },
@@ -50,8 +86,8 @@
 						closeIconLabel: 'Închide',
 						sections: [
 							{ description: 'Alegeți ce categorii de cookie-uri acceptați. Detalii în <a href="' + cfg.cookies + '">Politica de cookie-uri</a>.' },
-							{ title: 'Necesare', description: 'Asigură funcționarea și securitatea site-ului (inclusiv protecția Cloudflare și memorarea acestei alegeri). Nu pot fi dezactivate.', linkedCategory: 'necessary' },
-							{ title: 'Analiză', description: 'Google Analytics 4 ne ajută să înțelegem, agregat și anonimizat, cum este folosit site-ul. Se activează doar cu acordul dumneavoastră.', linkedCategory: 'analytics' }
+							{ title: 'Necesare', description: 'Asigură funcționarea și securitatea site-ului (inclusiv protecția Cloudflare și memorarea acestei alegeri). Nu pot fi dezactivate.', linkedCategory: 'necessary', cookieTable: cookies.ro.necessary },
+							{ title: 'Analiză', description: 'Google Analytics 4 ne ajută să înțelegem, agregat și anonimizat, cum este folosit site-ul. Se activează doar cu acordul dumneavoastră.', linkedCategory: 'analytics', cookieTable: cookies.ro.analytics }
 						]
 					}
 				},
@@ -72,8 +108,8 @@
 						closeIconLabel: 'Close',
 						sections: [
 							{ description: 'Choose which cookie categories you accept. Details in our <a href="' + cfg.cookies + '">Cookie policy</a>.' },
-							{ title: 'Necessary', description: 'Keep the site working and secure (including Cloudflare protection and remembering this choice). They cannot be disabled.', linkedCategory: 'necessary' },
-							{ title: 'Analytics', description: 'Google Analytics 4 helps us understand, in aggregate, how the site is used. Enabled only with your consent.', linkedCategory: 'analytics' }
+							{ title: 'Necessary', description: 'Keep the site working and secure (including Cloudflare protection and remembering this choice). They cannot be disabled.', linkedCategory: 'necessary', cookieTable: cookies.en.necessary },
+							{ title: 'Analytics', description: 'Google Analytics 4 helps us understand, in aggregate, how the site is used. Enabled only with your consent.', linkedCategory: 'analytics', cookieTable: cookies.en.analytics }
 						]
 					}
 				}

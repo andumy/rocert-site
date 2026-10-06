@@ -29,7 +29,7 @@ function rs_home_page(string $lang, array $media): string
             'lead' => 'Certificare ISO pentru organizații din toată România: evaluăm sisteme de management după standarde ISO și scheme sectoriale, cu auditori experimentați și decizii imparțiale.',
             'note' => 'sau <a href="' . rs_url('ro', 'request') . '">solicitați o ofertă</a> — răspundem în maximum 3 zile lucrătoare.', 'card_meta' => 'EXEMPLU PRODUCȚIE SRL',
             'statement' => 'De aproape trei decenii, ROCERT oferă certificare ISO organizațiilor din toată România.', 'muted' => 'Independent, riguros și cu un singur scop: un certificat care', 'accent2' => 'înseamnă ceva.',
-            'stats' => [['1997', 'anul înființării ROCERT'], ['18', 'standarde și scheme de certificare'], ['[NR]', 'certificate active în registru'], ['3 zile', 'termen maxim pentru ofertă']],
+            'stats' => [['29', 'ani de experiență'], ['18', 'standarde și scheme de certificare'], ['+2000', 'clienți certificați'], ['3 zile', 'termen maxim pentru ofertă']],
             'cat_eyebrow' => 'Domenii de certificare', 'cat_title' => 'Certificare ISO pentru fiecare domeniu de activitate',
             'why_eyebrow' => 'De ce ROCERT', 'why_title' => 'Rigoare în audit. Claritate în relație.',
             'whys' => [['Imparțialitate garantată', 'Decizia de certificare este luată independent de echipa de audit. Nu oferim consultanță organizațiilor pe care le certificăm.'], ['Auditori cu experiență sectorială', 'Echipa de audit este aleasă după domeniul dumneavoastră de activitate (coduri EA și CAEN).'], ['Audit integrat sau combinat', 'Mai multe standarde, un singur program de audit. Mai puțin timp alocat, aceeași rigoare.'], ['Ofertă în maximum 3 zile', 'Personalizată pentru organizația dumneavoastră, din momentul primirii cererii complete.']],
@@ -46,7 +46,7 @@ function rs_home_page(string $lang, array $media): string
             'lead' => 'ISO certification for organisations across Romania: we assess management systems against ISO standards and sector schemes, with experienced auditors and impartial decisions.',
             'note' => 'or <a href="' . rs_url('en', 'request') . '">request a quote</a> — we reply within 3 working days.', 'card_meta' => 'EXAMPLE MANUFACTURING SRL',
             'statement' => 'For almost three decades, ROCERT has provided ISO certification to organisations across Romania.', 'muted' => 'Independent, rigorous and with one goal: a certificate that', 'accent2' => 'means something.',
-            'stats' => [['1997', 'the year ROCERT was founded'], ['18', 'certification standards and schemes'], ['[NR]', 'active certificates in our register'], ['3 days', 'maximum quote turnaround']],
+            'stats' => [['29', 'years of experience'], ['18', 'certification standards and schemes'], ['+2000', 'certified clients'], ['3 days', 'maximum quote turnaround']],
             'cat_eyebrow' => 'Certification areas', 'cat_title' => 'ISO certification for every field of activity',
             'why_eyebrow' => 'Why ROCERT', 'why_title' => 'Rigorous audits. Clear relationships.',
             'whys' => [['Guaranteed impartiality', 'Certification decisions are taken independently of the audit team. We never provide consultancy to organisations we certify.'], ['Sector-experienced auditors', 'The audit team is chosen for your field of activity (EA and NACE codes).'], ['Integrated or combined audits', 'Several standards, one audit programme. Less time spent, the same rigour.'], ['A quote within 3 days', 'Tailored to your organisation, counted from the moment we receive the complete request.']],
@@ -98,7 +98,7 @@ function rs_verify_page(string $lang, array $media): string
     );
     $content = rb_heading(esc_html($t['where']), 2) . rb_p(esc_html($t['where_p']), 'is-style-lead')
         . rb_block('card', ['title' => $t['own'], 'text' => $t['own_p'], 'buttonText' => $t['own_btn'], 'buttonUrl' => rs_url($lang, 'request'), 'tone' => 'dark']);
-    $out .= rb_block('split', ['side' => 'left', 'image' => $media['certificate'] ?? 0, 'alt' => $lang === 'ro' ? 'Verificare certificat ROCERT: seria tipărită pe certificat' : 'Certificate verification: the serial printed on a ROCERT certificate'], $content);
+    $out .= rb_block('split', ['side' => 'left', 'image' => $media['certificate'] ?? 0, 'hideMediaMobile' => true, 'alt' => $lang === 'ro' ? 'Verificare certificat ROCERT: seria tipărită pe certificat' : 'Certificate verification: the serial printed on a ROCERT certificate'], $content);
     return $out;
 }
 

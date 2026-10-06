@@ -606,7 +606,7 @@ img { height: auto; }
 /* ---------- Responsive ---------- */
 @media (max-width: 1100px) {
 	.rc-why__cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-	.rc-why-card { margin-top: 0 !important; }
+	.rc-why-card:nth-child(n) { margin-top: 0 !important; } /* :nth-child(n) outranks the staggered desktop offsets */
 	.rc-reqs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 	.rc-req:nth-child(n) { padding-left: 0; border-left: 0; }
 	.rc-stdtable__row { grid-template-columns: 170px minmax(0, 1fr) 24px; }
@@ -683,6 +683,17 @@ img { height: auto; }
 html.show--consent .rc-cc-pill, html.show--preferences .rc-cc-pill { display: none; }
 @media print { .rc-cc-pill { display: none; } }
 
+/* Mobile spacing rules: text/CTA never touches an image; an image that ends a section followed by a dark
+   section (or the footer) meets it directly, with no light padding band in between. */
+.rc-text-layout > * { min-width: 0; } /* a wide table scrolls inside its figure instead of widening the column */
+@media (max-width: 860px) {
+	.rc-split { row-gap: 32px; }
+	:is(.rc-split--media-left, .rc-split--media-right).rc-section:not(.rc-split--no-media-mobile):is(:has(+ .rc-dark), :last-child) { padding-bottom: 0; }
+	.rc-split--no-media-mobile > .rc-split__media { display: none; }
+	.rc-section:has(> .rc-zigzag:last-child):is(:has(+ .rc-dark), :last-child) { padding-bottom: 0; }
+	.rc-section:has(> .rc-zigzag:last-child):is(:has(+ .rc-dark), :last-child) .rc-zig:last-child { margin-bottom: 0; }
+}
+
 /* Request form details */
 .rc-form .rc-anaf { flex-wrap: wrap; }
 .rc-form .rc-anaf .ff-el-input--label { flex: 0 0 100%; }
@@ -713,7 +724,8 @@ html.show--consent .rc-cc-pill, html.show--preferences .rc-cc-pill { display: no
 @media (max-width: 860px) {
 	.rc-hero__media { display: block !important; min-height: 280px; }
 	.rc-hero__media::after { background: linear-gradient(180deg, var(--rc-dark) 0%, rgba(30,30,30,.15) 60%); }
-	.rc-float-card--hero { right: 16px; bottom: 24px; width: 250px; }
+	.rc-hero__media { min-height: 320px; }
+	.rc-float-card--hero { right: 16px; bottom: 96px; width: 250px; } /* clear of the tilted marquee that overlaps the band */
 	.rc-hero__content { padding-bottom: 40px; }
 }
 /* Contrast on blue and on dark panels without .rc-dark */

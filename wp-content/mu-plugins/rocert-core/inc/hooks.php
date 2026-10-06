@@ -94,13 +94,8 @@ add_action('rocert/form/submitted', static function (string $form, array $data, 
         'language' => $lang,
         'entry_id' => $entry_id,
         'submitted_at' => wp_date('c'),
-        'data' => array_diff_key($data, array_flip(['gdpr-agreement', 'cf-turnstile-response'])),
+        'data' => rocert_api_request_data($data),
     ];
-    foreach (ROCERT_ROW_FIELDS as $name) {
-        if (isset($payload['data'][$name])) {
-            $payload['data'][$name] = rocert_form_rows((string) $payload['data'][$name]) ?? [];
-        }
-    }
     if (!rocert_api_send_client($payload)) {
         $outbox = (array) get_option('rocert_api_outbox', []);
         $outbox[$entry_id] = ['payload' => $payload, 'attempts' => 1];
@@ -108,7 +103,79 @@ add_action('rocert/form/submitted', static function (string $form, array $data, 
     }
 }, 10, 4);
 
-/** POSTs a request to the rocert API; true on 200/201 */
+/*
+ * The request payload contract with the rocert API (POST /api/site/clients, documented in the rocert repo):
+ * exactly these keys, every one always present (null when empty), nothing else. The API rejects unknown
+ * keys, so a new form field means updating this map, the API's validation and its DTO together.
+ */
+const ROCERT_API_REQUEST_FIELDS = [
+    'request_type' => 'string', 'cui' => 'string', 'company_name' => 'string', 'address' => 'string', 'city' => 'string',
+    'county' => 'string', 'postal_code' => 'string', 'reg_com' => 'string', 'iban' => 'string', 'bank' => 'string',
+    'phone' => 'string', 'mobile' => 'string', 'fax' => 'string', 'email' => 'string', 'website' => 'string',
+    'manager_name' => 'string', 'manager_role' => 'string', 'manager_phone' => 'string',
+    'contact_name' => 'string', 'contact_role' => 'string', 'contact_phone' => 'string', 'contact_email' => 'string', 'contact_fax' => 'string',
+    'standards' => 'list', 'standard_other' => 'string', 'integrated_system' => 'string', 'integration_level' => 'list',
+    'scope_description' => 'string', 'ea_codes' => 'list',
+    'total_employees' => 'int', 'loc0_address' => 'string', 'loc0_activity' => 'string',
+    'loc0_staff_p' => 'int', 'loc0_staff_t' => 'int', 'loc0_staff_r' => 'int', 'loc0_shift_1' => 'int', 'loc0_shift_2' => 'int', 'loc0_shift_3' => 'int',
+    'locations' => 'rows', 'job_roles' => 'rows',
+    'advanced_technology' => 'string', 'regulated_field' => 'string', 'many_processes' => 'string', 'design_development' => 'string',
+    'design_staff' => 'int', 'shift_differences' => 'string', 'repetitive_processes' => 'string', 'unique_processes' => 'string',
+    'shift_details' => 'string', 'outsourced_processes' => 'string',
+    'existing_standards' => 'string', 'existing_certificate' => 'string', 'existing_body' => 'string',
+    'particularities' => 'list', 'particularities_details' => 'string', 'iqnet' => 'string', 'audit_mode' => 'string',
+    'implementation' => 'string', 'consultant' => 'string', 'planned_audit_date' => 'string', 'source' => 'list',
+    'filled_by_name' => 'string', 'filled_by_role' => 'string', 'signature_filler' => 'string',
+    'signer_manager_name' => 'string', 'signer_manager_role' => 'string', 'signature_manager' => 'string',
+];
+
+/** Row columns per repeater field: 'string' or 'int' */
+const ROCERT_API_ROW_FIELDS = [
+    'locations' => ['address' => 'string', 'activity' => 'string', 'staff_p' => 'int', 'staff_t' => 'int', 'staff_r' => 'int', 'shift_1' => 'int', 'shift_2' => 'int', 'shift_3' => 'int'],
+    'job_roles' => ['role' => 'string', 'count' => 'int'],
+];
+
+/** @param mixed $value */
+function rocert_api_value(string $type, $value)
+{
+    if ($type === 'list') {
+        return array_values(array_unique(array_filter(array_map('strval', (array) $value), 'strlen')));
+    }
+    $value = is_scalar($value) ? trim((string) $value) : '';
+    if ($value === '') {
+        return null;
+    }
+    return $type === 'int' ? (is_numeric($value) ? max(0, (int) $value) : null) : $value;
+}
+
+/** Submitted form data reduced to the API contract: every contract key, typed, nothing else. */
+function rocert_api_request_data(array $data): array
+{
+    $out = [];
+    foreach (ROCERT_API_REQUEST_FIELDS as $key => $type) {
+        if ($type !== 'rows') {
+            $out[$key] = rocert_api_value($type, $data[$key] ?? null);
+            continue;
+        }
+        $rows = [];
+        foreach (rocert_form_rows((string) ($data[$key] ?? '')) ?? [] as $row) {
+            $clean = [];
+            foreach (ROCERT_API_ROW_FIELDS[$key] as $column => $column_type) {
+                $clean[$column] = rocert_api_value($column_type, $row[$column] ?? null);
+            }
+            if (array_filter($clean, static fn ($v) => $v !== null)) {
+                $rows[] = $clean;
+            }
+        }
+        $out[$key] = $rows;
+    }
+    return $out;
+}
+
+/**
+ * POSTs a request to the rocert API. True when there is nothing left to retry: accepted (200/201), or rejected
+ * for good (4xx other than 408/429, e.g. 422 when the payload breaks the contract; logged, the entry stays in Fluent Forms).
+ */
 function rocert_api_send_client(array $payload): bool
 {
     $response = wp_remote_post(ROCERT_API_URL . '/api/site/clients', [
@@ -117,11 +184,16 @@ function rocert_api_send_client(array $payload): bool
         'body' => wp_json_encode($payload, JSON_UNESCAPED_UNICODE),
     ]);
     $code = is_wp_error($response) ? 0 : (int) wp_remote_retrieve_response_code($response);
-    if (!in_array($code, [200, 201], true)) {
-        error_log(sprintf('[rocert-api] client request entry %d failed: %s', $payload['entry_id'] ?? 0, is_wp_error($response) ? $response->get_error_message() : $code . ' ' . wp_remote_retrieve_body($response)));
-        return false;
+    if (in_array($code, [200, 201], true)) {
+        return true;
     }
-    return true;
+    $detail = is_wp_error($response) ? $response->get_error_message() : $code . ' ' . mb_substr(wp_remote_retrieve_body($response), 0, 2000);
+    if ($code >= 400 && $code < 500 && !in_array($code, [408, 429], true)) {
+        error_log(sprintf('[rocert-api] client request entry %d REJECTED, not retried: %s', $payload['entry_id'] ?? 0, $detail));
+        return true;
+    }
+    error_log(sprintf('[rocert-api] client request entry %d failed, will retry: %s', $payload['entry_id'] ?? 0, $detail));
+    return false;
 }
 
 add_action('init', static function (): void {

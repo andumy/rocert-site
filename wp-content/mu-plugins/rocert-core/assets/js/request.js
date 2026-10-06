@@ -127,7 +127,7 @@
 				field.id = id;
 				field.dataset.key = c.key;
 				field.type = c.type === 'number' ? 'number' : 'text';
-				if (c.type === 'number') { field.min = '0'; field.inputMode = 'numeric'; }
+				if (c.type === 'number') { field.min = '0'; field.inputMode = 'numeric'; } else { field.maxLength = 255; }
 				field.value = values[c.key] || '';
 				field.addEventListener('input', save);
 				cell.append(label, field);

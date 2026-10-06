@@ -66,7 +66,7 @@ function rocert_form_rows(string $value): ?array
             return null;
         }
         foreach ($row as $key => $cell) {
-            if (!is_string($key) || !is_string($cell) || mb_strlen($cell) > 300) {
+            if (!is_string($key) || !is_string($cell) || mb_strlen($cell) > 255) {
                 return null;
             }
         }
@@ -83,7 +83,19 @@ add_filter('fluentform/validation_errors', static function ($errors, $data, $for
     if (rocert_form_key((int) $form->id) !== 'request') {
         return $errors;
     }
-    $invalid = rocert_form_lang((int) $form->id) === 'en' ? 'Invalid value.' : 'Valoare invalidă.';
+    $en = rocert_form_lang((int) $form->id) === 'en';
+    $invalid = $en ? 'Invalid value.' : 'Valoare invalidă.';
+    /* The rocert API's contract limits, checked here so the visitor sees them instead of the API rejecting the request */
+    if (!preg_match('/^\s*(RO)?\s*\d{2,10}\s*$/i', (string) ($data['cui'] ?? ''))) {
+        $errors['cui'] = ['format' => $en ? 'Enter a valid tax ID, e.g. RO12345678.' : 'Introduceți un CUI valid, ex. RO12345678.'];
+    }
+    $long = ['scope_description', 'repetitive_processes', 'unique_processes', 'shift_details', 'outsourced_processes', 'particularities_details'];
+    foreach (ROCERT_API_REQUEST_FIELDS as $name => $type) {
+        $max = in_array($name, $long, true) ? 5000 : 255;
+        if ($type === 'string' && !in_array($name, ROCERT_SIGNATURE_FIELDS, true) && is_string($data[$name] ?? null) && mb_strlen(trim($data[$name])) > $max) {
+            $errors[$name] = ['max' => $en ? "At most {$max} characters." : "Maximum {$max} de caractere."];
+        }
+    }
     foreach (ROCERT_ROW_FIELDS as $name) {
         if (rocert_form_rows((string) ($data[$name] ?? '')) === null) {
             $errors[$name] = ['format' => $invalid];

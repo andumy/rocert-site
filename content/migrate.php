@@ -93,6 +93,14 @@ $migrations = [
         }
         return $changed;
     }),
+    /* Request form v2: site/job-role rows, three shifts, total staff, process types, split names, signatures */
+    '2026-10-06-request-form-v2' => static function (): void {
+        require_once __DIR__ . '/lib/urls.php';
+        require_once __DIR__ . '/lib/forms.php';
+        foreach (ff_save_request_forms() as $key => $id) {
+            WP_CLI::log("  form {$key} → {$id}");
+        }
+    },
 ];
 
 $done = (array) get_option('rocert_migrations', []);
@@ -101,7 +109,12 @@ foreach ($migrations as $key => $migration) {
         continue;
     }
     WP_CLI::log("Migration {$key}");
-    $migration();
+    try {
+        $migration();
+    } catch (Throwable $e) {
+        /* Not marked done, and the deploy fails loudly: it runs again on the next deploy once fixed */
+        WP_CLI::error("Migration {$key} failed: " . $e->getMessage() . ' (' . basename($e->getFile()) . ':' . $e->getLine() . ')');
+    }
     $done[] = $key;
     update_option('rocert_migrations', $done, false);
 }

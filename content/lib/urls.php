@@ -1,6 +1,8 @@
 <?php
 /** Root-relative URLs, so seeded content stays valid on local, stage and prod alike. */
 
+const RS_LANGS = ['ro', 'en'];
+
 const RS_SLUGS = [
     'ro' => ['home' => '/', 'hub' => '/certificari/', 'verify' => '/verifica-certificat/', 'request' => '/cerere-de-certificare/', 'contact' => '/contact/', 'about' => '/despre-noi/', 'accreditations' => '/despre-noi/acreditari-si-recunoasteri/', 'public' => '/informatii-publice/', 'privacy' => '/politica-de-confidentialitate/', 'cookies' => '/politica-cookie-uri/', 'terms' => '/termeni-si-conditii/'],
     'en' => ['home' => '/en/', 'hub' => '/en/certifications/', 'verify' => '/en/verify-certificate/', 'request' => '/en/certification-request/', 'contact' => '/en/contact/', 'about' => '/en/about-us/', 'accreditations' => '/en/about-us/accreditations-and-recognitions/', 'public' => '/en/public-information/', 'privacy' => '/en/privacy-policy/', 'cookies' => '/en/cookie-policy/', 'terms' => '/en/terms-of-use/'],

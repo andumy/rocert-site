@@ -23,7 +23,6 @@ foreach (['blocks', 'urls', 'forms', 'pages-certs', 'pages-site'] as $lib) {
     require_once __DIR__ . "/lib/{$lib}.php";
 }
 
-const RS_LANGS = ['ro', 'en'];
 const RS_STD_IMAGES = [
     'iso-9001' => 'quality', 'sr-en-15224' => 'medical', 'iso-13485' => 'medical-devices', 'gdp' => 'logistics-warehouse',
     'iso-14001' => 'environment', 'iso-50001' => 'energy', 'iso-45001' => 'safety', 'iso-39001' => 'road-safety',
@@ -63,24 +62,7 @@ update_option('rocert_media', $media, false);
 
 /* ---------------- Forms ---------------- */
 WP_CLI::log('Forms…');
-$forms = (array) get_option('rocert_forms', []);
-foreach (['contact_ro', 'contact_en'] as $obsolete) {
-    if (!empty($forms[$obsolete])) {
-        $GLOBALS['wpdb']->delete($GLOBALS['wpdb']->prefix . 'fluentform_forms', ['id' => (int) $forms[$obsolete]]);
-        $GLOBALS['wpdb']->delete($GLOBALS['wpdb']->prefix . 'fluentform_form_meta', ['form_id' => (int) $forms[$obsolete]]);
-        unset($forms[$obsolete]);
-    }
-}
-foreach (RS_LANGS as $lang) {
-    $ro = $lang === 'ro';
-    [$fields, $submit] = ff_request_form($lang);
-    $forms['request_' . $lang] = ff_save(
-        $ro ? 'Cerere de certificare C02/ROC (RO)' : 'Certification request C02/ROC (EN)', $fields, $submit,
-        $ro ? 'Mulțumim! Am primit cererea de certificare. Vă trimitem oferta în maximum 3 zile lucrătoare.' : 'Thank you! We received your certification request. You will receive our quote within 3 working days.',
-        ($ro ? '[ROCERT] Cerere de certificare — ' : '[ROCERT] Certification request — ') . '{inputs.company_name} ({inputs.request_type})', (int) ($forms['request_' . $lang] ?? 0)
-    );
-}
-update_option('rocert_forms', $forms, false);
+$forms = ff_save_request_forms();
 
 /* ---------------- Pages ---------------- */
 $translations = [];

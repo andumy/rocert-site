@@ -96,6 +96,11 @@ add_action('rocert/form/submitted', static function (string $form, array $data, 
         'submitted_at' => wp_date('c'),
         'data' => array_diff_key($data, array_flip(['gdpr-agreement', 'cf-turnstile-response'])),
     ];
+    foreach (ROCERT_ROW_FIELDS as $name) {
+        if (isset($payload['data'][$name])) {
+            $payload['data'][$name] = rocert_form_rows((string) $payload['data'][$name]) ?? [];
+        }
+    }
     if (!rocert_api_send_client($payload)) {
         $outbox = (array) get_option('rocert_api_outbox', []);
         $outbox[$entry_id] = ['payload' => $payload, 'attempts' => 1];

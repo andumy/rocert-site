@@ -29,7 +29,7 @@ function ff_text(string $name, string $label, bool $req, string $msg, array $o =
     return [
         'element' => 'input_text',
         'attributes' => ['type' => $o['type'] ?? 'text', 'name' => $name, 'value' => '', 'class' => '', 'placeholder' => $o['placeholder'] ?? ''],
-        'settings' => ['container_class' => $o['class'] ?? '', 'label' => $label, 'label_placement' => '', 'admin_field_label' => $label, 'help_message' => $o['help'] ?? '', 'validation_rules' => ff_rules($req, $msg), 'conditional_logics' => ff_cond($o['cond'] ?? [], $o['cond_type'] ?? 'any')],
+        'settings' => ['container_class' => $o['class'] ?? '', 'label' => $label, 'label_placement' => '', 'admin_field_label' => $o['admin'] ?? $label, 'help_message' => $o['help'] ?? '', 'validation_rules' => ff_rules($req, $msg), 'conditional_logics' => ff_cond($o['cond'] ?? [], $o['cond_type'] ?? 'any')],
         'editor_options' => ['title' => 'Simple Text', 'icon_class' => 'ff-edit-text', 'template' => 'inputText'],
         'uniqElKey' => ff_uid(),
     ];
@@ -61,8 +61,8 @@ function ff_number(string $name, string $label, array $o = []): array
 {
     return [
         'element' => 'input_number',
-        'attributes' => ['type' => 'number', 'name' => $name, 'value' => '', 'id' => '', 'class' => '', 'placeholder' => ''],
-        'settings' => ['container_class' => '', 'label' => $label, 'admin_field_label' => $label, 'label_placement' => '', 'help_message' => '', 'validation_rules' => ['required' => ['value' => false, 'message' => '', 'global' => false], 'numeric' => ['value' => true, 'message' => '#', 'global' => false], 'min' => ['value' => '0', 'message' => '≥ 0', 'global' => false], 'max' => ['value' => '', 'message' => '', 'global' => false]], 'conditional_logics' => ff_cond($o['cond'] ?? []), 'calculation_settings' => ['status' => false, 'formula' => '']],
+        'attributes' => ['type' => 'number', 'name' => $name, 'value' => '', 'id' => '', 'class' => '', 'placeholder' => '', 'min' => '0'],
+        'settings' => ['container_class' => $o['class'] ?? '', 'label' => $label, 'admin_field_label' => $o['admin'] ?? $label, 'label_placement' => '', 'help_message' => '', 'validation_rules' => ['required' => ['value' => $o['required'] ?? false, 'message' => $o['msg'] ?? '', 'global' => false], 'numeric' => ['value' => true, 'message' => '#', 'global' => false], 'min' => ['value' => '0', 'message' => '≥ 0', 'global' => false], 'max' => ['value' => '', 'message' => '', 'global' => false]], 'conditional_logics' => ff_cond($o['cond'] ?? []), 'calculation_settings' => ['status' => false, 'formula' => '']],
         'editor_options' => ['title' => 'Numeric Field', 'icon_class' => 'icon-slack', 'template' => 'inputText'],
         'uniqElKey' => ff_uid(),
     ];
@@ -114,6 +114,29 @@ function ff_cols(array $columns, array $cond = [], string $cond_type = 'any'): a
         'columns' => array_map(static fn ($fields) => ['width' => round(100 / count($columns), 2), 'fields' => $fields], $columns),
         'editor_options' => ['title' => count($columns) . ' Column Container', 'icon_class' => 'icon-columns'],
         'uniqElKey' => ff_uid(),
+    ];
+}
+
+/**
+ * A row repeater (Fluent Forms free has none): the rows are built by request.js from the field list below and
+ * saved as JSON into the text field $name, which stays a normal Fluent field (validation, entries, e-mails).
+ * @param array<int, array{0:string,1:string,2?:string}> $columns [key, label, 'number'|'text'|'wide']
+ */
+function ff_repeater(string $name, string $label, array $columns, array $texts, bool $start_with_row = false): array
+{
+    $config = ['columns' => array_map(static fn ($c) => ['key' => $c[0], 'label' => $c[1], 'type' => $c[2] ?? 'text'], $columns), 'startWithRow' => $start_with_row] + $texts;
+    return [
+        ff_text($name, $label, false, '', ['class' => 'rc-json-field']),
+        ff_html(sprintf('<div class="rc-repeater" data-rc-repeater="%s" data-config="%s"></div>', esc_attr($name), esc_attr(wp_json_encode($config, JSON_UNESCAPED_UNICODE)))),
+    ];
+}
+
+/** Signature pad (request.js) that stores a PNG data URL in the text field $name. */
+function ff_signature(string $name, string $label, bool $req, string $msg, string $clear, string $hint): array
+{
+    return [
+        ff_text($name, $label, $req, $msg, ['class' => 'rc-sign-field']),
+        ff_html(sprintf('<div class="rc-sign" data-rc-sign="%s" data-clear="%s" data-hint="%s"></div>', esc_attr($name), esc_attr($clear), esc_attr($hint))),
     ];
 }
 
@@ -180,23 +203,25 @@ function ff_request_form(string $lang): array
     }
     $yn = ['yes' => $l['yes'], 'no' => $l['no']];
 
-    $location = static function (int $n) use ($T, $l) {
-        $p = 'loc' . $n . '_';
-        $title = $n === 0 ? $T('Sediu social', 'Registered office') : $T('Locația nr. ', 'Site no. ') . $n;
-        return [
-            ff_html('<p class="rc-loc-title">' . esc_html($title) . '</p>', $n ? [['extra_locations', (string) $n, '>=']] : []),
-            ff_cols([
-                [ff_text($p . 'address', $T('Adresa', 'Address'), $n === 0, $l['req'])],
-                [ff_text($p . 'activity', $T('Activitatea desfășurată', 'Activity performed'), $n === 0, $l['req'])],
-            ], $n ? [['extra_locations', (string) $n, '>=']] : []),
-            ff_cols([
-                [ff_number($p . 'staff_p', $T('Personal permanent (P)', 'Permanent staff (P)'))],
-                [ff_number($p . 'staff_t', $T('Personal temporar (T)', 'Temporary staff (T)'))],
-                [ff_number($p . 'staff_r', $T('Part-time (R)', 'Part-time (R)'))],
-                [ff_text($p . 'shifts', $T('Schimburi / personal pe schimb', 'Shifts / staff per shift'), false, $l['req'])],
-            ], $n ? [['extra_locations', (string) $n, '>=']] : []),
-        ];
-    };
+    $office = $T('Sediu social', 'Registered office') . ' — ';
+    $staff = static fn (string $p, bool $req) => [
+        ff_cols([
+            [ff_number($p . 'staff_p', $T('Personal permanent (P)', 'Permanent staff (P)'), ['required' => $req, 'msg' => $l['req'], 'admin' => $office . $T('Personal permanent (P)', 'Permanent staff (P)')])],
+            [ff_number($p . 'staff_t', $T('Personal temporar (T)', 'Temporary staff (T)'), ['required' => $req, 'msg' => $l['req'], 'admin' => $office . $T('Personal temporar (T)', 'Temporary staff (T)')])],
+            [ff_number($p . 'staff_r', $T('Part-time (R)', 'Part-time (R)'), ['required' => $req, 'msg' => $l['req'], 'admin' => $office . $T('Part-time (R)', 'Part-time (R)')])],
+        ]),
+        ff_cols([
+            [ff_number($p . 'shift_1', $T('Schimbul 1 (nr. personal)', 'Shift 1 (staff)'), ['required' => $req, 'msg' => $l['req'], 'admin' => $office . $T('Schimbul 1 (nr. personal)', 'Shift 1 (staff)')])],
+            [ff_number($p . 'shift_2', $T('Schimbul 2 (nr. personal)', 'Shift 2 (staff)'), ['required' => $req, 'msg' => $l['req'], 'admin' => $office . $T('Schimbul 2 (nr. personal)', 'Shift 2 (staff)')])],
+            [ff_number($p . 'shift_3', $T('Schimbul 3 (nr. personal)', 'Shift 3 (staff)'), ['required' => $req, 'msg' => $l['req'], 'admin' => $office . $T('Schimbul 3 (nr. personal)', 'Shift 3 (staff)')])],
+        ]),
+    ];
+    $location_columns = [
+        ['address', $T('Adresa', 'Address'), 'wide'], ['activity', $T('Activitatea desfășurată', 'Activity performed'), 'wide'],
+        ['staff_p', $T('Permanent (P)', 'Permanent (P)'), 'number'], ['staff_t', $T('Temporar (T)', 'Temporary (T)'), 'number'], ['staff_r', 'Part-time (R)', 'number'],
+        ['shift_1', $T('Schimbul 1', 'Shift 1'), 'number'], ['shift_2', $T('Schimbul 2', 'Shift 2'), 'number'], ['shift_3', $T('Schimbul 3', 'Shift 3'), 'number'],
+    ];
+    $sign_texts = [$T('Șterge semnătura', 'Clear signature'), $T('Semnați cu mouse-ul sau cu degetul în chenarul de mai sus.', 'Sign with your mouse or finger in the box above.')];
 
     $fields = [
         ff_choice('input_radio', 'request_type', $T('Tipul cererii', 'Request type'), $l['types'], true, $l['req'], ['class' => 'rc-type-tiles', 'value' => 'certification']),
@@ -223,17 +248,17 @@ function ff_request_form(string $lang): array
         ]),
         ff_html('<p class="rc-form-sub">' . esc_html($T('Manager de vârf (reprezentant legal)', 'Top manager (legal representative)')) . '</p>'),
         ff_cols([
-            [ff_text('manager_name', $T('Nume și prenume', 'Full name'), true, $l['req'])],
-            [ff_text('manager_role', $T('Funcție', 'Position'), true, $l['req'])],
-            [ff_text('manager_phone', $T('Telefon', 'Phone'), false, $l['req'], ['type' => 'tel'])],
+            [ff_text('manager_name', $T('Nume și prenume', 'Full name'), true, $l['req'], ['admin' => $T('Manager de vârf — Nume', 'Top manager — Name')])],
+            [ff_text('manager_role', $T('Funcție', 'Position'), true, $l['req'], ['admin' => $T('Manager de vârf — Funcție', 'Top manager — Position')])],
+            [ff_text('manager_phone', $T('Telefon', 'Phone'), false, $l['req'], ['type' => 'tel', 'admin' => $T('Manager de vârf — Telefon', 'Top manager — Phone')])],
         ]),
         ff_html('<p class="rc-form-sub">' . esc_html($T('Persoana de contact responsabilă de sistem', 'Contact person responsible for the system')) . '</p>'),
         ff_cols([
-            [ff_text('contact_name', $T('Nume și prenume', 'Full name'), true, $l['req'])],
-            [ff_text('contact_role', $T('Funcție', 'Position'), false, $l['req'])],
+            [ff_text('contact_name', $T('Nume și prenume', 'Full name'), true, $l['req'], ['admin' => $T('Persoană de contact — Nume', 'Contact person — Name')])],
+            [ff_text('contact_role', $T('Funcție', 'Position'), false, $l['req'], ['admin' => $T('Persoană de contact — Funcție', 'Contact person — Position')])],
         ]),
         ff_cols([
-            [ff_text('contact_phone', $T('Telefon', 'Phone'), true, $l['req'], ['type' => 'tel'])],
+            [ff_text('contact_phone', $T('Telefon', 'Phone'), true, $l['req'], ['type' => 'tel', 'admin' => $T('Persoană de contact — Telefon', 'Contact person — Phone')])],
             [ff_email('contact_email', 'E-mail', true, $l['req'], $l['email_bad'])],
         ]),
 
@@ -248,10 +273,21 @@ function ff_request_form(string $lang): array
         ff_choice('input_checkbox', 'ea_codes', $T('Domenii EA (coduri CAEN)', 'EA sectors (NACE codes)'), $ea, false, $l['req'], ['class' => 'rc-ea-grid']),
 
         ff_section($T('4. Informații pentru stabilirea duratei auditului', '4. Information to determine audit duration'), $T('4.1 Toate locațiile unde se desfășoară activitățile (sediu social, sucursale, puncte de lucru, depozite, laboratoare). P = permanent, T = temporar/sezonier, R = part-time.', '4.1 All sites where the activities take place (registered office, branches, work points, warehouses, laboratories). P = permanent, T = temporary/seasonal, R = part-time.')),
-        ...$location(0),
-        ff_choice('select', 'extra_locations', $T('Câte locații suplimentare aveți?', 'How many additional sites do you have?'), ['0' => '0', '1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5'], false, $l['req'], ['value' => '0']),
-        ...$location(1), ...$location(2), ...$location(3), ...$location(4), ...$location(5),
-        ff_textarea('hr_roles', $T('4.2 Meserii cu mai mulți angajați care efectuează aceeași activitate', '4.2 Job roles with several employees performing the same activity'), false, $l['req'], ['placeholder' => $T('ex. zidari – 12, șoferi – 8', 'e.g. bricklayers – 12, drivers – 8')]),
+        ff_number('total_employees', $T('Număr total de angajați', 'Total number of employees'), ['required' => true, 'msg' => $l['req']]),
+        ff_html('<p class="rc-loc-title">' . esc_html($T('Sediu social', 'Registered office')) . '</p>'),
+        ff_cols([
+            [ff_text('loc0_address', $T('Adresa', 'Address'), true, $l['req'], ['admin' => $office . $T('Adresa', 'Address')])],
+            [ff_text('loc0_activity', $T('Activitatea desfășurată', 'Activity performed'), true, $l['req'], ['admin' => $office . $T('Activitatea desfășurată', 'Activity performed')])],
+        ]),
+        ...$staff('loc0_', true),
+        ...ff_repeater('locations', $T('Locații suplimentare', 'Additional sites'), $location_columns, [
+            'add' => $T('Adaugă o locație suplimentară', 'Add another site'), 'remove' => $T('Șterge locația', 'Remove site'),
+            'rowTitle' => $T('Locația nr. %d', 'Site no. %d'),
+        ]),
+        ff_html('<p class="rc-form-sub">' . esc_html($T('4.2 Meserii cu mai mulți angajați care efectuează aceeași activitate', '4.2 Job roles with several employees performing the same activity')) . '</p><p class="rc-form-note">' . esc_html($T('Doar dacă există mai mulți angajați care efectuează aceeași activitate (zidari, strungari, șoferi etc.).', 'Only where several employees perform the same activity (bricklayers, turners, drivers etc.).')) . '</p>'),
+        ...ff_repeater('job_roles', $T('Meserii', 'Job roles'), [['role', $T('Denumire meserie', 'Job title'), 'wide'], ['count', $T('Nr. angajați', 'No. of employees'), 'number']], [
+            'add' => $T('Adaugă o meserie', 'Add a job role'), 'remove' => $T('Șterge rândul', 'Remove row'), 'rowTitle' => '',
+        ], true),
         ff_html('<p class="rc-form-sub">' . esc_html($T('4.3 Complexitatea proceselor', '4.3 Process complexity')) . '</p>'),
         ff_cols([
             [ff_choice('input_radio', 'advanced_technology', $T('Tehnologie avansată', 'Advanced technology'), $yn, false, $l['req'], ['class' => 'rc-inline-radio'])],
@@ -262,6 +298,10 @@ function ff_request_form(string $lang): array
             [ff_choice('input_radio', 'design_development', $T('Proiectare-dezvoltare', 'Design and development'), $yn, false, $l['req'], ['class' => 'rc-inline-radio'])],
             [ff_number('design_staff', $T('Nr. personal proiectare', 'Design staff'), ['cond' => [['design_development', 'yes']]])],
             [ff_choice('input_radio', 'shift_differences', $T('Procese diferite de la un schimb la altul', 'Different processes between shifts'), $yn, false, $l['req'], ['class' => 'rc-inline-radio'])],
+        ]),
+        ff_cols([
+            [ff_textarea('repetitive_processes', $T('Procese repetitive', 'Repetitive processes'), false, $l['req'], ['rows' => 2])],
+            [ff_textarea('unique_processes', $T('Procese unice', 'One-off processes'), false, $l['req'], ['rows' => 2])],
         ]),
         ff_textarea('shift_details', $T('Ce procese se desfășoară în fiecare schimb?', 'Which processes run in each shift?'), false, $l['req'], ['cond' => [['shift_differences', 'yes']]]),
         ff_textarea('outsourced_processes', $T('Procese externalizate sau activități subcontractate care pot influența conformitatea', 'Outsourced processes or subcontracted activities that may affect conformity'), false, $l['req']),
@@ -281,12 +321,21 @@ function ff_request_form(string $lang): array
         ff_text('consultant', $T('Numele firmei de consultanță / colaboratorului și perioada', 'Consultancy / collaborator name and period'), false, $l['req'], ['cond' => [['implementation', 'consultancy'], ['implementation', 'external']]]),
 
         ff_section($T('5. Alte informații', '5. Other information')),
-        ff_cols([
-            [ff_text('planned_audit_date', $T('Data preconizată pentru audit', 'Planned audit date'), false, $l['req'], ['placeholder' => $T('ex. martie 2027', 'e.g. March 2027')])],
-            [ff_text('filled_by', $T('Completat de (nume și funcție)', 'Completed by (name and position)'), true, $l['req'])],
-        ]),
+        ff_text('planned_audit_date', $T('Data preconizată pentru audit', 'Planned audit date'), false, $l['req'], ['placeholder' => $T('ex. martie 2027', 'e.g. March 2027')]),
         ff_choice('input_checkbox', 'source', $T('Cum ați aflat de ROCERT?', 'How did you hear about ROCERT?'), $ro ? ['training' => 'Training-uri', 'events' => 'Conferințe, târguri', 'personal' => 'Contacte individuale', 'internet' => 'Internet', 'ads' => 'Materiale publicitare', 'previous' => 'Colaborări anterioare'] : ['training' => 'Training', 'events' => 'Conferences, fairs', 'personal' => 'Personal contacts', 'internet' => 'Internet', 'ads' => 'Advertising', 'previous' => 'Previous collaboration'], false, $l['req'], ['class' => 'rc-chip-checks']),
         ff_html('<p class="rc-form-note">' . esc_html($T('Documentele suplimentare (lista proceselor tehnologice, copii ale certificatelor existente) ne pot fi trimise după depunerea cererii, la office@rocert.ro.', 'Supporting documents (list of technological processes, copies of existing certificates) can be sent after submitting, to office@rocert.ro.')) . '</p>'),
+        ff_html('<p class="rc-form-sub">' . esc_html($T('Persoana care a completat cererea', 'Person who completed the request')) . '</p>'),
+        ff_cols([
+            [ff_text('filled_by_name', $T('Nume și prenume', 'Full name'), true, $l['req'], ['admin' => $T('Completat de — Nume', 'Completed by — Name')])],
+            [ff_text('filled_by_role', $T('Funcție', 'Position'), true, $l['req'], ['admin' => $T('Completat de — Funcție', 'Completed by — Position')])],
+        ]),
+        ...ff_signature('signature_filler', $T('Semnătura', 'Signature'), true, $l['req'], ...$sign_texts),
+        ff_html('<p class="rc-form-sub">' . esc_html($T('Managerul organizației', 'Head of the organisation')) . '</p>'),
+        ff_cols([
+            [ff_text('signer_manager_name', $T('Nume și prenume', 'Full name'), false, $l['req'], ['admin' => $T('Manager (semnatar) — Nume', 'Head of organisation (signatory) — Name')])],
+            [ff_text('signer_manager_role', $T('Funcție', 'Position'), false, $l['req'], ['admin' => $T('Manager (semnatar) — Funcție', 'Head of organisation (signatory) — Position')])],
+        ]),
+        ...ff_signature('signature_manager', $T('Semnătura managerului', 'Signature of the head of the organisation'), false, $l['req'], ...$sign_texts),
         ff_gdpr($l['gdpr'], $l['req']),
     ];
     return [$fields, $T('Trimite cererea', 'Send request')];
@@ -341,4 +390,28 @@ function ff_save(string $title, array $fields, string $submit, string $confirmat
         $wpdb->insert($meta, ['form_id' => $id, 'meta_key' => $key, 'value' => $value]);
     }
     return $id;
+}
+
+/** Creates or updates the RO and EN request forms (same ids), drops obsolete ones; returns the id map. */
+function ff_save_request_forms(): array
+{
+    $forms = (array) get_option('rocert_forms', []);
+    foreach (['contact_ro', 'contact_en'] as $obsolete) {
+        if (!empty($forms[$obsolete])) {
+            $GLOBALS['wpdb']->delete($GLOBALS['wpdb']->prefix . 'fluentform_forms', ['id' => (int) $forms[$obsolete]]);
+            $GLOBALS['wpdb']->delete($GLOBALS['wpdb']->prefix . 'fluentform_form_meta', ['form_id' => (int) $forms[$obsolete]]);
+            unset($forms[$obsolete]);
+        }
+    }
+    foreach (RS_LANGS as $lang) {
+        $ro = $lang === 'ro';
+        [$fields, $submit] = ff_request_form($lang);
+        $forms['request_' . $lang] = ff_save(
+            $ro ? 'Cerere de certificare C02/ROC (RO)' : 'Certification request C02/ROC (EN)', $fields, $submit,
+            $ro ? 'Mulțumim! Am primit cererea de certificare. Vă trimitem oferta în maximum 3 zile lucrătoare.' : 'Thank you! We received your certification request. You will receive our quote within 3 working days.',
+            ($ro ? '[ROCERT] Cerere de certificare — ' : '[ROCERT] Certification request — ') . '{inputs.company_name} ({inputs.request_type})', (int) ($forms['request_' . $lang] ?? 0)
+        );
+    }
+    update_option('rocert_forms', $forms, false);
+    return $forms;
 }

@@ -977,3 +977,40 @@ ul.is-style-chips > li { margin: 0 !important; display: inline-flex; align-items
 .rc-hero__content .rc-pill + h1 { margin-top: 30px !important; }
 .rc-cathero__lead { color: #E2E5E9; font-size: clamp(1.0625rem, 1.4vw, 1.25rem); max-width: 720px; margin-top: 18px !important; text-shadow: 0 1px 12px rgba(0,0,0,.5); }
 .rc-catstd-head { margin-bottom: clamp(32px, 4vw, 48px) !important; }
+
+/* Request form: row repeaters (extra sites, job roles) and signature pads (rocert-core/assets/js/request.js) */
+.rc-form .rc-json-field { display: none !important; }
+.rc-form .rc-proxy-input { position: absolute !important; width: 1px !important; height: 1px !important; min-height: 0 !important; padding: 0 !important; opacity: 0; pointer-events: none; }
+.rc-form .rc-sign-field .ff-el-input--content { position: relative; }
+.rc-repeater__rows { display: grid; gap: 12px; }
+.rc-repeater__rows:not(:empty) { margin-bottom: 14px; }
+.rc-repeater__row { position: relative; padding: 18px 56px 18px 18px; border: 1px solid var(--rc-line); border-radius: 18px; background: var(--rc-surface); }
+.rc-repeater__row--compact { padding: 12px 56px 12px 14px; }
+.rc-repeater__title { font-family: var(--rc-head); font-weight: 800; font-size: 14px; letter-spacing: .06em; text-transform: uppercase; color: var(--rc-blue); margin: 0 0 12px !important; }
+.rc-repeater__grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px 14px; }
+.rc-repeater__cell--wide { grid-column: span 3; }
+.rc-repeater__cell--number, .rc-repeater__cell--text { grid-column: span 2; }
+.rc-repeater__row--compact .rc-repeater__cell--wide { grid-column: span 4; }
+.rc-repeater__cell { display: flex; flex-direction: column; justify-content: flex-end; } /* inputs line up when a label wraps */
+.rc-repeater__label { display: block; font-weight: 600; font-size: 13px; margin-bottom: 6px; }
+.rc-repeater__remove { position: absolute; top: 14px; right: 14px; width: 32px; height: 32px; display: grid; place-items: center; padding: 0; border-radius: 50%; border: 1px solid var(--rc-line); background: var(--rc-bg); color: var(--rc-muted); cursor: pointer; transition: background-color .2s, color .2s, border-color .2s; }
+.rc-repeater__row--compact .rc-repeater__remove { top: auto; bottom: 20px; }
+.rc-repeater__remove:hover { background: #B42318; border-color: #B42318; color: #fff; }
+.rc-repeater__add { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 20px; border-radius: 999px; border: 1px solid var(--rc-ink); background: transparent; color: var(--rc-ink); font-family: var(--rc-head); font-weight: 700; font-size: 14px; cursor: pointer; transition: background-color .2s, color .2s; }
+.rc-repeater__add span { font-size: 20px; line-height: 1; }
+.rc-repeater__add:hover { background: var(--rc-ink); color: #fff; }
+.rc-repeater__remove:focus-visible, .rc-repeater__add:focus-visible, .rc-sign__clear:focus-visible { outline: 3px solid var(--rc-blue); outline-offset: 2px; }
+.rc-sign__pad { display: block; width: 100%; height: 180px; border: 1px dashed #AEB4BD; border-radius: 16px; background: #fff; touch-action: none; cursor: crosshair; }
+.rc-sign.is-signed .rc-sign__pad { border-style: solid; border-color: var(--rc-line); }
+.rc-sign__bar { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin-top: 8px; font-size: 13px; color: var(--rc-muted); }
+.rc-sign__clear { background: none; border: 0; padding: 0; font: inherit; font-weight: 600; color: var(--rc-ink); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; white-space: nowrap; }
+@media (max-width: 860px) {
+	.rc-repeater__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+	.rc-repeater__cell--wide, .rc-repeater__row--compact .rc-repeater__cell--wide { grid-column: span 3; }
+	.rc-repeater__cell--number, .rc-repeater__cell--text { grid-column: span 1; }
+	.rc-repeater__row--compact .rc-repeater__cell--number { grid-column: span 2; }
+	.rc-repeater__row, .rc-repeater__row--compact { padding: 16px; }
+	.rc-repeater__row--compact .rc-repeater__cell:first-child { padding-right: 44px; } /* room for the delete button */
+	.rc-repeater__remove, .rc-repeater__row--compact .rc-repeater__remove { top: 12px; bottom: auto; right: 12px; }
+	.rc-sign__pad { height: 160px; }
+}

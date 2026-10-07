@@ -174,51 +174,86 @@
 		if (input.value) host.classList.add('is-signed'); /* restored from a draft */
 
 		var ctx = canvas.getContext('2d');
-		var drawing = false, w = 0, h = 0;
+		/* The pen strokes are kept as points: the signature sent is redrawn from them, cropped to what was drawn
+		   and scaled to fit 300×100 px (the API contract's limit) with a constant 2 px line, so it stays legible. */
+		var MAX_W = 300, MAX_H = 100, PAD = 4, LINE = 2;
+		var strokes = [], drawing = false, w = 0, h = 0, restored = !!input.value;
+		function pen(c, width) { c.lineWidth = width; c.lineCap = 'round'; c.lineJoin = 'round'; c.strokeStyle = '#14171C'; c.fillStyle = '#14171C'; }
+		function trace(c, list) {
+			list.forEach(function (s) {
+				c.beginPath();
+				if (s.length === 1) { c.arc(s[0].x, s[0].y, c.lineWidth / 2, 0, Math.PI * 2); c.fill(); return; }
+				c.moveTo(s[0].x, s[0].y);
+				for (var i = 1; i < s.length; i++) c.lineTo(s[i].x, s[i].y);
+				c.stroke();
+			});
+		}
+		function redraw() {
+			ctx.clearRect(0, 0, w, h);
+			if (restored && input.value) {
+				/* A signature restored from a draft (already small) is shown at its proportions, centred */
+				var img = new Image();
+				img.onload = function () {
+					var k = Math.min(w * 0.9 / img.width, h * 0.8 / img.height);
+					ctx.drawImage(img, (w - img.width * k) / 2, (h - img.height * k) / 2, img.width * k, img.height * k);
+				};
+				img.src = input.value;
+			}
+			pen(ctx, 2.4);
+			trace(ctx, strokes);
+		}
 		function setup() {
 			var r = canvas.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
 			if (!r.width || (Math.round(r.width) === w && Math.round(r.height) === h)) return;
 			w = Math.round(r.width); h = Math.round(r.height);
 			canvas.width = w * dpr; canvas.height = h * dpr;
 			ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-			ctx.lineWidth = 2.4; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.strokeStyle = '#14171C'; ctx.fillStyle = '#14171C';
-			if (input.value) { var img = new Image(); img.onload = function () { ctx.drawImage(img, 0, 0, w, h); }; img.src = input.value; }
+			redraw();
 		}
 		function point(e) { var r = canvas.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; }
 		function store() {
-			/* Exported at 1x: crisp enough for a signature, a fraction of the size */
+			var minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+			strokes.forEach(function (s) { s.forEach(function (p) { minX = Math.min(minX, p.x); minY = Math.min(minY, p.y); maxX = Math.max(maxX, p.x); maxY = Math.max(maxY, p.y); }); });
+			if (maxX < minX) return;
+			var bw = Math.max(1, maxX - minX), bh = Math.max(1, maxY - minY);
+			var k = Math.min(1, (MAX_W - 2 * PAD) / bw, (MAX_H - 2 * PAD) / bh);
 			var out = document.createElement('canvas');
-			out.width = w; out.height = h;
-			out.getContext('2d').drawImage(canvas, 0, 0, w, h);
+			out.width = Math.min(MAX_W, Math.ceil(bw * k) + 2 * PAD);
+			out.height = Math.min(MAX_H, Math.ceil(bh * k) + 2 * PAD);
+			var o = out.getContext('2d');
+			o.setTransform(k, 0, 0, k, PAD - minX * k, PAD - minY * k);
+			pen(o, LINE / k);
+			trace(o, strokes);
 			input.value = out.toDataURL('image/png');
 			host.classList.add('is-signed');
 			sync(input);
 		}
+		function reset() { strokes = []; restored = false; redraw(); }
 		canvas.addEventListener('pointerdown', function (e) {
 			if (e.button !== 0) return;
 			e.preventDefault();
 			setup();
+			if (restored) reset(); /* drawing over a restored signature means signing again */
 			drawing = true;
 			canvas.setPointerCapture(e.pointerId);
-			var p = point(e);
-			ctx.beginPath(); ctx.arc(p.x, p.y, 1.2, 0, Math.PI * 2); ctx.fill();
-			ctx.beginPath(); ctx.moveTo(p.x, p.y);
+			strokes.push([point(e)]);
+			redraw();
 		});
 		canvas.addEventListener('pointermove', function (e) {
 			if (!drawing) return;
-			var p = point(e);
-			ctx.lineTo(p.x, p.y); ctx.stroke();
+			strokes[strokes.length - 1].push(point(e));
+			redraw();
 		});
 		function end() { if (drawing) { drawing = false; store(); } }
 		canvas.addEventListener('pointerup', end);
 		canvas.addEventListener('pointercancel', end);
 		clear.addEventListener('click', function () {
-			ctx.clearRect(0, 0, w, h);
+			reset();
 			input.value = '';
 			host.classList.remove('is-signed');
 			sync(input);
 		});
-		form.addEventListener('reset', function () { setTimeout(function () { ctx.clearRect(0, 0, w, h); host.classList.remove('is-signed'); }); });
+		form.addEventListener('reset', function () { setTimeout(function () { reset(); host.classList.remove('is-signed'); }); });
 		if ('ResizeObserver' in window) new ResizeObserver(setup).observe(canvas); else setup();
 	});
 

@@ -25,6 +25,7 @@ return [
                     ['__cf_bm', 'Cloudflare', 'Distinge vizitatorii reali de traficul automatizat (bot management)', '30 de minute', 'Necesare'],
                     ['cf_clearance', 'Cloudflare', 'Confirmă trecerea unei verificări de securitate', 'până la 1 an', 'Necesare'],
                     ['wfwaf-authcookie-*', 'rocert.ro (Wordfence)', 'Securitate; setat doar pentru administratorii autentificați', 'sesiunea de administrare', 'Necesare'],
+                    ['rocert-request-draft:* (stocare locală)', 'rocert.ro', 'Ciorna cererii de certificare, păstrată doar în browserul tău, pe acest dispozitiv, până la trimitere', 'până la trimitere, max. 30 de zile', 'Necesare'],
                     ['_ga', 'Google (Google Analytics 4)', 'Distinge vizitatorii unici în statisticile agregate', '2 ani', 'Analiză/Statistică'],
                     ['_ga_&lt;ID&gt;', 'Google (Google Analytics 4)', 'Păstrează starea sesiunii pentru statisticile agregate', '2 ani', 'Analiză/Statistică'],
                 ]],
@@ -33,7 +34,7 @@ return [
             ]],
             ['heading' => '4. Cum funcționează consimțământul', 'blocks' => [
                 ['type' => 'p', 'text' => 'La prima vizită, un banner îți permite să accepți sau să refuzi cookie-urile de analiză ori să alegi în detaliu. Până la exprimarea acordului, folosim Google Consent Mode v2 cu stocarea pentru analiză setată implicit pe „refuzat”, astfel încât Google Analytics nu plasează cookie-uri și nu colectează date de identificare a vizitatorului.'],
-                ['type' => 'p', 'text' => 'Îți poți modifica sau retrage <strong>oricând</strong> consimțământul din linkul <strong>„Setări cookie-uri”</strong> din subsolul fiecărei pagini. Retragerea consimțământului nu afectează legalitatea prelucrării efectuate înainte de retragere.'],
+                ['type' => 'p', 'text' => 'Îți poți modifica sau retrage <strong>oricând</strong> consimțământul din pictograma cu scut din colțul din stânga jos sau din linkul <strong>„Setări cookie-uri”</strong> din subsolul fiecărei pagini. Retragerea consimțământului nu afectează legalitatea prelucrării efectuate înainte de retragere.'],
             ]],
             ['heading' => '5. Gestionarea cookie-urilor din browser', 'blocks' => [
                 ['type' => 'p', 'text' => 'Poți de asemenea să ștergi sau să blochezi cookie-urile din setările browserului (Chrome, Firefox, Safari, Edge etc.). Blocarea cookie-urilor necesare poate afecta funcționarea unor părți ale site-ului, de exemplu trimiterea formularelor.'],
@@ -70,6 +71,7 @@ return [
                     ['__cf_bm', 'Cloudflare', 'Distinguishes real visitors from automated traffic (bot management)', '30 minutes', 'Necessary'],
                     ['cf_clearance', 'Cloudflare', 'Confirms that a security challenge has been passed', 'up to 1 year', 'Necessary'],
                     ['wfwaf-authcookie-*', 'rocert.ro (Wordfence)', 'Security; set only for logged-in administrators', 'administration session', 'Necessary'],
+                    ['rocert-request-draft:* (local storage)', 'rocert.ro', 'Draft of the certification request, kept only in your browser on this device until it is sent', 'until sent, max. 30 days', 'Necessary'],
                     ['_ga', 'Google (Google Analytics 4)', 'Distinguishes unique visitors in aggregated statistics', '2 years', 'Analytics/Statistics'],
                     ['_ga_&lt;ID&gt;', 'Google (Google Analytics 4)', 'Keeps session state for aggregated statistics', '2 years', 'Analytics/Statistics'],
                 ]],
@@ -78,7 +80,7 @@ return [
             ]],
             ['heading' => '4. How consent works', 'blocks' => [
                 ['type' => 'p', 'text' => 'On your first visit, a banner lets you accept or reject analytics cookies or choose in detail. Until you consent, we use Google Consent Mode v2 with analytics storage set to "denied" by default, so Google Analytics does not set cookies or collect visitor identifiers.'],
-                ['type' => 'p', 'text' => 'You can change or withdraw your consent <strong>at any time</strong> via the <strong>"Cookie settings"</strong> link in the footer of every page. Withdrawing consent does not affect the lawfulness of processing carried out before withdrawal.'],
+                ['type' => 'p', 'text' => 'You can change or withdraw your consent <strong>at any time</strong> via the shield icon in the bottom-left corner or the <strong>"Cookie settings"</strong> link in the footer of every page. Withdrawing consent does not affect the lawfulness of processing carried out before withdrawal.'],
             ]],
             ['heading' => '5. Managing cookies in your browser', 'blocks' => [
                 ['type' => 'p', 'text' => 'You can also delete or block cookies in your browser settings (Chrome, Firefox, Safari, Edge, etc.). Blocking necessary cookies may affect how parts of the website work, for example submitting forms.'],

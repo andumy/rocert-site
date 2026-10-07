@@ -74,9 +74,17 @@ function rocert_form_rows(string $value): ?array
     return $rows;
 }
 
+/** Empty, or a PNG data URL within the rocert API contract: at most 150,000 characters and 300×100 px. */
 function rocert_form_signature_ok(string $value): bool
 {
-    return $value === '' || (strlen($value) < 400000 && preg_match('#^data:image/png;base64,[A-Za-z0-9+/]+=*$#', $value) === 1);
+    if ($value === '') {
+        return true;
+    }
+    if (strlen($value) > 150000 || preg_match('#^data:image/png;base64,([A-Za-z0-9+/]+=*)$#', $value, $m) !== 1) {
+        return false;
+    }
+    $size = @getimagesizefromstring((string) base64_decode($m[1], true));
+    return $size !== false && $size[2] === IMAGETYPE_PNG && $size[0] <= 300 && $size[1] <= 100;
 }
 
 add_filter('fluentform/validation_errors', static function ($errors, $data, $form) {

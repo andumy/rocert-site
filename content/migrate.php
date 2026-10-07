@@ -101,6 +101,13 @@ $migrations = [
             WP_CLI::log("  form {$key} → {$id}");
         }
     },
+    /* Cookie policy: the request-form draft in local storage, and the cookie-settings icon */
+    '2026-10-07-cookie-policy-draft-and-icon' => static fn () => rocert_migrate_replace(['politica-cookie-uri', 'cookie-policy'], [
+        '<td>sesiunea de administrare</td><td>Necesare</td></tr>' => '<td>sesiunea de administrare</td><td>Necesare</td></tr><tr><td>rocert-request-draft:* (stocare locală)</td><td>rocert.ro</td><td>Ciorna cererii de certificare, păstrată doar în browserul tău, pe acest dispozitiv, până la trimitere</td><td>până la trimitere, max. 30 de zile</td><td>Necesare</td></tr>',
+        '<td>administration session</td><td>Necessary</td></tr>' => '<td>administration session</td><td>Necessary</td></tr><tr><td>rocert-request-draft:* (local storage)</td><td>rocert.ro</td><td>Draft of the certification request, kept only in your browser on this device until it is sent</td><td>until sent, max. 30 days</td><td>Necessary</td></tr>',
+        'consimțământul din linkul <strong>„Setări cookie-uri”</strong> din subsolul fiecărei pagini.' => 'consimțământul din pictograma cu scut din colțul din stânga jos sau din linkul <strong>„Setări cookie-uri”</strong> din subsolul fiecărei pagini.',
+        'via the <strong>"Cookie settings"</strong> link in the footer of every page.' => 'via the shield icon in the bottom-left corner or the <strong>"Cookie settings"</strong> link in the footer of every page.',
+    ]),
     /* Request form: fax for the organisation and the contact person, EA sectors required */
     '2026-10-06-request-form-v3' => static function (): void {
         require_once __DIR__ . '/lib/urls.php';

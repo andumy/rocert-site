@@ -88,20 +88,35 @@ add_action('rocert/form/submitted', static function (string $form, array $data, 
     if ($form !== 'request' || !ROCERT_API_URL || !ROCERT_API_TOKEN) {
         return;
     }
-    $payload = [
+    $submitted_at = wp_date('c');
+    if (!rocert_api_send_client(rocert_api_request_payload($entry_id, $lang, $submitted_at, $data))) {
+        /* Only the reference is queued: each retry rebuilds the payload from the Fluent entry with the current
+           contract code, so a request queued under an older build is still sent in the shape the API expects. */
+        $outbox = (array) get_option('rocert_api_outbox', []);
+        $outbox[$entry_id] = ['lang' => $lang, 'submitted_at' => $submitted_at, 'attempts' => 1];
+        update_option('rocert_api_outbox', $outbox, false);
+    }
+}, 10, 4);
+
+/** The API payload for a request entry; $data defaults to the entry as Fluent Forms stored it. Null if the entry is gone. */
+function rocert_api_request_payload(int $entry_id, string $lang, string $submitted_at, ?array $data = null): ?array
+{
+    if ($data === null) {
+        $entry = wpFluent()->table('fluentform_submissions')->where('id', $entry_id)->first();
+        $data = $entry ? json_decode((string) $entry->response, true) : null;
+        if (!is_array($data)) {
+            return null;
+        }
+    }
+    return [
         'source' => 'website',
         'form' => 'request',
         'language' => $lang,
         'entry_id' => $entry_id,
-        'submitted_at' => wp_date('c'),
+        'submitted_at' => $submitted_at,
         'data' => rocert_api_request_data($data),
     ];
-    if (!rocert_api_send_client($payload)) {
-        $outbox = (array) get_option('rocert_api_outbox', []);
-        $outbox[$entry_id] = ['payload' => $payload, 'attempts' => 1];
-        update_option('rocert_api_outbox', $outbox, false);
-    }
-}, 10, 4);
+}
 
 /*
  * The request payload contract with the rocert API (POST /api/site/clients, documented in the rocert repo):
@@ -211,11 +226,20 @@ add_action('rocert_api_outbox_retry', static function (): void {
         return;
     }
     foreach ($outbox as $entry_id => $item) {
-        if (rocert_api_send_client($item['payload'])) {
+        /* Items queued by older builds hold a whole 'payload'; its language and date are kept, its data is rebuilt */
+        $lang = $item['lang'] ?? $item['payload']['language'] ?? 'ro';
+        $submitted_at = $item['submitted_at'] ?? $item['payload']['submitted_at'] ?? wp_date('c');
+        $payload = rocert_api_request_payload((int) $entry_id, $lang, $submitted_at);
+        if ($payload === null) {
+            error_log(sprintf('[rocert-api] entry %d no longer exists in Fluent Forms; dropped from the outbox', $entry_id));
+            unset($outbox[$entry_id]);
+        } elseif (rocert_api_send_client($payload)) {
             unset($outbox[$entry_id]);
         } elseif (++$outbox[$entry_id]['attempts'] >= 48) {
             error_log(sprintf('[rocert-api] giving up on entry %d after 48 attempts (still in Fluent Forms entries)', $entry_id));
             unset($outbox[$entry_id]);
+        } else {
+            $outbox[$entry_id] = ['lang' => $lang, 'submitted_at' => $submitted_at, 'attempts' => $outbox[$entry_id]['attempts']];
         }
     }
     update_option('rocert_api_outbox', $outbox, false);

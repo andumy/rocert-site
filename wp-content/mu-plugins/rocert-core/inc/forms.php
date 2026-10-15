@@ -157,3 +157,15 @@ add_filter('fluentform/email_to', static function ($address, $notification, $sub
 
 /* Pages are served from the Cloudflare cache, where a nonce would go stale: never require it. Spam is handled by Turnstile. */
 add_filter('fluentform/nonce_verify', '__return_false');
+
+/* Fluent's honeypot (a hidden field bots fill in) on our forms: spam protection that works on cached pages,
+   before and alongside Turnstile. */
+add_filter('fluentform/honeypot_status', static fn ($status, $form_id = false) => $form_id && rocert_form_key((int) $form_id) ? true : $status, 10, 2);
+add_filter('fluentform/honeypot_spam_message', static function ($message, $form_id) {
+    if (!rocert_form_key((int) $form_id)) {
+        return $message;
+    }
+    return rocert_form_lang((int) $form_id) === 'en'
+        ? 'The request could not be sent. Please reload the page and try again, or write to office@rocert.ro.'
+        : 'Cererea nu a putut fi trimisă. Reîncărcați pagina și încercați din nou sau scrieți-ne la office@rocert.ro.';
+}, 10, 2);

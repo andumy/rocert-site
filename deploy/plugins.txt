@@ -1,4 +1,4 @@
-# slug version — pinned; bump deliberately after checking the changelog and Patchstack/WPScan.
+# slug version — minimum version: provision installs it when a plugin is missing or older, never downgrades. Bump deliberately after checking the changelog and Patchstack/WPScan.
 wordfence 9.0.2
 wordpress-seo 28.6
 wp-mail-smtp 4.10.0

@@ -43,7 +43,8 @@ log "Plugins"
 wp plugin delete akismet hello >/dev/null 2>&1 || true
 grep -vE '^\s*(#|$)' "$DEPLOY/plugins.txt" | while read -r slug version; do
   current="$(wp plugin get "$slug" --field=version 2>/dev/null || true)"
-  if [ "$current" != "$version" ]; then
+  # Install when missing or older than the pin; never downgrade one that auto-updated past it on the server.
+  if [ -z "$current" ] || [ "$(printf '%s\n' "$current" "$version" | sort -V | tail -n1)" != "$current" ]; then
     wp plugin install "$slug" --version="$version" --force
   fi
   # Wordfence protects stage/prod; locally it only adds latency (it DNS-resolves the site host,

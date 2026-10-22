@@ -9,6 +9,9 @@ CONTENT=/opt/rocert/content
 OLLIE_VERSION=1.6.3
 
 log() { printf '\n\033[1;34m==> %s\033[0m\n' "$*"; }
+# Pinned versions are minimums: true when $1 (installed) is missing or older than $2. Never downgrade anything that
+# updated past the pin on the server.
+needs_install() { [ -z "$1" ] || [ "$(printf '%s\n' "$1" "$2" | sort -V | tail -n1)" != "$1" ]; }
 
 log "Waiting for WordPress files and database"
 for i in $(seq 1 60); do
@@ -31,7 +34,7 @@ wp language core install "${WP_LOCALE:-ro_RO}" --activate >/dev/null
 wp language core install en_GB >/dev/null || true
 
 log "Theme"
-if [ "$(wp theme get ollie --field=version 2>/dev/null || true)" != "$OLLIE_VERSION" ]; then
+if needs_install "$(wp theme get ollie --field=version 2>/dev/null || true)" "$OLLIE_VERSION"; then
   wp theme install ollie --version="$OLLIE_VERSION" --force
 fi
 wp theme activate rocert
@@ -43,8 +46,7 @@ log "Plugins"
 wp plugin delete akismet hello >/dev/null 2>&1 || true
 grep -vE '^\s*(#|$)' "$DEPLOY/plugins.txt" | while read -r slug version; do
   current="$(wp plugin get "$slug" --field=version 2>/dev/null || true)"
-  # Install when missing or older than the pin; never downgrade one that auto-updated past it on the server.
-  if [ -z "$current" ] || [ "$(printf '%s\n' "$current" "$version" | sort -V | tail -n1)" != "$current" ]; then
+  if needs_install "$current" "$version"; then
     wp plugin install "$slug" --version="$version" --force
   fi
   # Wordfence protects stage/prod; locally it only adds latency (it DNS-resolves the site host,
